@@ -11,12 +11,6 @@ Purple Team adversarial validation suite for the SYNTROPY forensic ecosystem.
 
 ---
 
-## ● Etymology & Origin
-
-The name **K-Verify** is derived from the **K**ernel interface that underpins all validation logic. Unlike a traditional scanner that enumerates state, K-Verify *verifies* — it actively tests whether the detection mechanisms in the SYNTROPY ecosystem correctly identify adversarial behavior. The "K" also reflects its integration with the **K**-Scanner detection engine.
-
----
-
 ## ● Overview
 
 K-Verify is a Purple Team adversarial validation tool designed to stress-test the detection capabilities of the SYNTROPY forensic ecosystem — **K-Scanner** and **LinSpec**.
@@ -178,7 +172,7 @@ sudo ./kverify --cleanup
 
 ---
 
-### 📊 Post-Analysis & Report Viewing
+## ● Post-Analysis & Report Viewing
 
 After generating the reports, you can quickly inspect them directly from the terminal using standard Linux utilities:
 
@@ -200,7 +194,7 @@ cat kverify-report.json | head -n 15
 ![RWX Detection Test](./Imagens/kverify2.png)
 *2 - Running a specific module (`--rwx`) alongside code-level analysis of `rwx.c`.*
 
-![Bypass Assessment](./Imagens/kverify3.png)
+![Post-Analysis Workspace](./Imagens/kverify3.png)
 *3 - Post-analysis workspace in `tmux` formatting the generated CSV and JSON reports.*
 
 ---
@@ -219,7 +213,9 @@ K-Verify is designed for controlled adversarial testing:
 
 ---
 
-## ● Requirements
+## ● Deployment
+
+### Requirements
 
 * Linux Kernel 5.x or newer
 * gcc
@@ -232,26 +228,33 @@ K-Verify is designed for controlled adversarial testing:
 ## ● Repository Structure
 
 ```text
-src/
-  main.c         Entry point, CLI parsing, orchestration
-  rwx.c          RWX memory allocation and shellcode execution
-  hide.c         Process hiding and masquerading techniques
-  bypass.c       Mitigation bypass assessment (W^X, ASLR)
-  verify.c       Detection validation against K-Scanner/LinSpec
-  utils.c        Shared utilities and output formatting
-include/
-  kverify.h      Main header with types, constants, and MITRE IDs
-  modules.h      Module API declarations
-  colors.h       ANSI terminal color macros
-docs/
-  PURPLE_MODEL.md           Purple Team methodology
-  ADVERSARIAL_SCENARIOS.md  Scenario descriptions with MITRE ATT&CK
-  VALIDATION_PROTOCOL.md    Detection cross-reference logic
-Imagens/
-tests/
-reports/
-Makefile
-README.md
+├── build/
+│   └── obj/
+├── docs/
+│   ├── ADVERSARIAL_SCENARIOS.md
+│   ├── PURPLE_MODEL.md
+│   └── VALIDATION_PROTOCOL.md
+├── Imagens/
+│   ├── kverify1.png
+│   ├── kverify2.png
+│   └── kverify3.png
+├── include/
+│   ├── colors.h
+│   ├── kverify.h
+│   └── modules.h
+├── reports/
+├── scenarios/
+├── src/
+│   ├── bypass.c
+│   ├── hide.c
+│   ├── main.c
+│   ├── rwx.c
+│   ├── utils.c
+│   └── verify.c
+├── tests/
+├── LICENSE
+├── Makefile
+└── README.md
 ```
 
 ---
@@ -285,6 +288,12 @@ README.md
 [![Docs-Purple](https://img.shields.io/badge/Purple-Model-8A2BE2?style=flat-square\&logo=target\&logoColor=white)](./docs/PURPLE_MODEL.md)
 [![Docs-Scenarios](https://img.shields.io/badge/Adversarial-Scenarios-CC0000?style=flat-square\&logo=linux\&logoColor=white)](./docs/ADVERSARIAL_SCENARIOS.md)
 [![Docs-Validation](https://img.shields.io/badge/Validation-Protocol-00599C?style=flat-square\&logo=gitbook\&logoColor=white)](./docs/VALIDATION_PROTOCOL.md)
+
+---
+
+## ● Etymology & Origin
+
+The name **K-Verify** is derived from the **K**ernel interface that underpins all validation logic. Unlike a traditional scanner that enumerates state, K-Verify *verifies* — it actively tests whether the detection mechanisms in the SYNTROPY ecosystem correctly identify adversarial behavior. The "K" also reflects its integration with the **K**-Scanner detection engine.
 
 ---
 
