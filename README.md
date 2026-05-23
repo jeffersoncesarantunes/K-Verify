@@ -196,15 +196,15 @@ cat kverify-report.json | head -n 15
 
 ![Purple Team Matrix](./Imagens/kverify1.png)
 
-* **1 -** Complete dashboard output showing all validation scenarios, tool coverage, and final metrics.
+*1 - Complete dashboard output showing all validation scenarios, tool coverage, and final metrics.
 
 ![RWX Detection Test](./Imagens/kverify2.png)
 
-* **2 -** Running a specific module (`--rwx`) alongside code-level analysis of `rwx.c`.
+*2 - Running a specific module (`--rwx`) alongside code-level analysis of `rwx.c`.
 
 ![Bypass Assessment](./Imagens/kverify3.png)
 
-* **3 -** Post-analysis workspace in `tmux` formatting the generated CSV and JSON reports.
+*3 - Post-analysis workspace in `tmux` formatting the generated CSV and JSON reports.
 
 ---
 
