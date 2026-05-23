@@ -178,6 +178,20 @@ sudo ./kverify --cleanup
 
 ---
 
+### 📊 Post-Analysis & Report Viewing
+
+After generating the reports, you can quickly inspect them directly from the terminal using standard Linux utilities:
+
+```bash
+# View aligned and formatted CSV results (top 15 results)
+column -t -s ',' kverify-report.csv | head -n 16
+
+# Quickly inspect the structured JSON output header
+cat kverify-report.json | head -n 15
+```
+
+---
+
 ## ● Project in Action
 
 ![Purple Team Matrix](./Imagens/kverify1.png)
