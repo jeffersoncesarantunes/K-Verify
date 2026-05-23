@@ -116,7 +116,7 @@ For each scenario, K-Verify queries the kernel interfaces that the target Blue T
 * **K-Scanner path:** Parses `/proc/[PID]/maps` for `rwx` permission entries
 * **LinSpec path:** Reads `/proc/sys/kernel/*` hardening parameters
 
-> **Note:** K-Scanner and LinSpec are reference tools from the [SYNTROPY](https://github.com/jeffersoncesarantunes) forensic ecosystem. They are **not required** to run K-Verify. The detection logic for both tools is embedded directly in K-Verify's own source code — it reads the same kernel interfaces they would use and *predicts* whether detection would occur. This makes K-Verify a fully self-contained binary with no external dependencies beyond the Linux kernel itself. The results shown in the "KS" and "LS" columns are a **synthetic detection assessment**, not a live integration with external tools.
+**Note:** K-Scanner and LinSpec are reference tools from the [SYNTROPY](https://github.com/jeffersoncesarantunes) forensic ecosystem. They are **not required** to run K-Verify. The detection logic for both tools is embedded directly in K-Verify's own source code — it reads the same kernel interfaces they would use and *predicts* whether detection would occur. This makes K-Verify a fully self-contained binary with no external dependencies beyond the Linux kernel itself. The results shown in the "KS" and "LS" columns are a **synthetic detection assessment**, not a live integration with external tools.
 
 ### Phase 3: Correlation
 
