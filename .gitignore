@@ -99,3 +99,6 @@ terraform.tfstate
 .kube/
 .aws/
 .docker/
+
+# Ferramentas de Sessão / Estado Local
+.sisyphus/
