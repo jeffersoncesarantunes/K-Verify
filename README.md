@@ -11,6 +11,12 @@ Purple Team adversarial validation suite for the SYNTROPY forensic ecosystem.
 
 ---
 
+## ● Etymology & Origin
+
+The name **K-Verify** derives from the Linux **Kernel** — the foundational interface that underpins all validation logic. The "K" references the Kernel in the same spirit as **K-Scanner**, its sister project in the SYNTROPY ecosystem. Unlike a scanner that enumerates state, K-Verify *verifies*: it actively tests whether detection mechanisms correctly identify adversarial behavior on a live system.
+
+---
+
 ## ● Overview
 
 K-Verify is a Purple Team adversarial validation tool designed to stress-test the detection capabilities of the SYNTROPY forensic ecosystem — **K-Scanner** and **LinSpec**.
@@ -288,12 +294,6 @@ K-Verify is designed for controlled adversarial testing:
 [![Docs-Purple](https://img.shields.io/badge/Purple-Model-8A2BE2?style=flat-square\&logo=target\&logoColor=white)](./docs/PURPLE_MODEL.md)
 [![Docs-Scenarios](https://img.shields.io/badge/Adversarial-Scenarios-CC0000?style=flat-square\&logo=linux\&logoColor=white)](./docs/ADVERSARIAL_SCENARIOS.md)
 [![Docs-Validation](https://img.shields.io/badge/Validation-Protocol-00599C?style=flat-square\&logo=gitbook\&logoColor=white)](./docs/VALIDATION_PROTOCOL.md)
-
----
-
-## ● Etymology & Origin
-
-The name **K-Verify** is derived from the **K**ernel interface that underpins all validation logic. Unlike a traditional scanner that enumerates state, K-Verify *verifies* — it actively tests whether the detection mechanisms in the SYNTROPY ecosystem correctly identify adversarial behavior. The "K" also reflects its integration with the **K**-Scanner detection engine.
 
 ---
 
