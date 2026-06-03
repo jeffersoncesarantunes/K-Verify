@@ -1,34 +1,15 @@
-# ==============================================================================
-# K-Verify - Git Ignore Configuration
-# Attack Simulation & Detection Verification Tool
-# ==============================================================================
-
-# NOTE: This repo is NOT currently a git repository.
-# This .gitignore serves as documentation for what SHOULD be ignored
-# if git tracking is initialized.
-
-# Binary
-# ------------------------------------------------------------------------------
 kverify
+test_kverify
 bin/
-
-# Build Artifacts
-# ------------------------------------------------------------------------------
 build/
 *.o
 *.a
 *.so
 *.out
-
-# Reports (auto-generated)
-# ------------------------------------------------------------------------------
 reports/
 kverify-report.json
 kverify-report.csv
 kverify-test.csv
-
-# Environment Files (CRITICAL)
-# ------------------------------------------------------------------------------
 .env
 .env.local
 .env.*.local
@@ -36,9 +17,6 @@ kverify-test.csv
 .env.development
 .env.staging
 .env.test
-
-# Secrets & Credentials
-# ------------------------------------------------------------------------------
 *.pem
 *.key
 *.p12
@@ -54,51 +32,31 @@ service-account.json
 .npmrc
 .pypirc
 .netrc
-
-# SSH Keys
-# ------------------------------------------------------------------------------
 id_rsa
 id_ed25519
 authorized_keys
 known_hosts
 .ssh/
 .gnupg/
-
-# Editor
-# ------------------------------------------------------------------------------
 .vscode/
 .idea/
 *~
 *.swp
-
-# OS
-# ------------------------------------------------------------------------------
 .DS_Store
 Thumbs.db
 Desktop.ini
-
-# History
-# ------------------------------------------------------------------------------
 .history
 .bash_history
 .zsh_history
-
-# Backup & Database
-# ------------------------------------------------------------------------------
 *.bak
 *.backup
 *.dump
 *.sql
 *.db
 *.sqlite
-
-# Cloud & Infrastructure
-# ------------------------------------------------------------------------------
 .terraform/
 terraform.tfstate
 .kube/
 .aws/
 .docker/
-
-# Ferramentas de Sessão / Estado Local
 .sisyphus/

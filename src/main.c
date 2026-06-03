@@ -11,45 +11,15 @@ static void print_usage(void)
     printf("  --rwx              RWX allocation and execution test\n");
     printf("  --hide             Process hiding and masquerade test\n");
     printf("  --bypass           Mitigation bypass assessment\n");
+    printf("  --bpf              eBPF telemetry validation\n");
+    printf("  --yara             YARA rule detection test\n");
+    printf("  --live             Live integration with K-Scanner/LinSpec\n");
     printf("  --verify-only      Run verification against existing state\n");
     printf("  --json             Export results in JSON format\n");
     printf("  --csv              Export results in CSV format\n");
     printf("  --output <file>    Output file prefix (default: kverify-report)\n");
-    printf("  --cleanup          Kill remaining child processes from tests\n");
+    printf("  --cleanup          Kill remaining child processes\n");
     printf("  --help             Show this help message\n");
-}
-
-static void cleanup_children(void)
-{
-    pid_t pgid = getpgid(0);
-    if (pgid > 0) {
-        kill(-pgid, SIGTERM);
-        usleep(100000);
-        kill(-pgid, SIGKILL);
-    }
-    printf("  Children cleaned up.\n");
-}
-
-static void init_result(ScenarioResult *r, ScenarioType type)
-{
-    r->type = type;
-    r->execution_result = RESULT_SKIP;
-    r->detection.kscanner_detected = 0;
-    r->detection.linspec_detected = 0;
-    r->detection.notes[0] = '\0';
-}
-
-static void print_banner(void)
-{
-    printf("\n");
-    printf("        " CLR_YELLOW "╔══════════════════════════════════════════════════════╗" CLR_RESET "\n");
-    printf("        " CLR_YELLOW "║                       K-Verify                       ║" CLR_RESET "\n");
-    printf("        " CLR_YELLOW "║         Purple Team - Adversarial Validation         ║" CLR_RESET "\n");
-    printf("        " CLR_YELLOW "╚══════════════════════════════════════════════════════╝" CLR_RESET "\n");
-    printf("\n");
-    if (geteuid() != 0) {
-        printf("  " CLR_BOLD_YELLOW "\xe2\x9a\xa0" CLR_RESET " " CLR_YELLOW "Not running as root" CLR_RESET " " CLR_YELLOW "— some tests may fail." CLR_RESET "\n\n");
-    }
 }
 
 int main(int argc, char *argv[])
@@ -58,6 +28,9 @@ int main(int argc, char *argv[])
     int run_rwx = 0;
     int run_hide = 0;
     int run_bypass = 0;
+    int run_bpf = 0;
+    int run_yara = 0;
+    int run_live = 0;
     int run_verify_only = 0;
     ExportFormat format = EXPORT_TERMINAL;
     const char *output_prefix = "kverify-report";
@@ -81,6 +54,18 @@ int main(int argc, char *argv[])
         }
         if (strcmp(argv[i], "--bypass") == 0) {
             run_bypass = 1; run_all = 0;
+            continue;
+        }
+        if (strcmp(argv[i], "--bpf") == 0) {
+            run_bpf = 1; run_all = 0;
+            continue;
+        }
+        if (strcmp(argv[i], "--yara") == 0) {
+            run_yara = 1; run_all = 0;
+            continue;
+        }
+        if (strcmp(argv[i], "--live") == 0) {
+            run_live = 1; run_all = 0;
             continue;
         }
         if (strcmp(argv[i], "--verify-only") == 0) {
@@ -113,7 +98,7 @@ int main(int argc, char *argv[])
     int count = 0;
 
     if (run_all || run_verify_only) {
-        run_rwx = run_hide = run_bypass = 1;
+        run_rwx = run_hide = run_bypass = run_bpf = run_yara = run_live = 1;
     }
 
     if (format != EXPORT_JSON) {
@@ -123,7 +108,7 @@ int main(int argc, char *argv[])
     if (run_rwx && !run_verify_only) {
         init_result(&results[count], SCENARIO_RWX_ALLOC);
         void *rwx_addr = rwx_allocate(4096, &results[count]);
-        snprintf(action_notes[count], MAX_PATH_LEN, "%s",
+        snprintf(action_notes[count], MAX_PATH_LEN, "%.250s",
                  results[count].detection.notes);
         count++;
 
@@ -163,7 +148,7 @@ int main(int argc, char *argv[])
 
             size_t sc_len = 16;
             rwx_execute(rwx_addr, 4096, shellcode, sc_len, &results[count]);
-            snprintf(action_notes[count], MAX_PATH_LEN, "%s",
+            snprintf(action_notes[count], MAX_PATH_LEN, "%.250s",
                      results[count].detection.notes);
             count++;
 
@@ -174,7 +159,7 @@ int main(int argc, char *argv[])
     if (run_hide && !run_verify_only) {
         init_result(&results[count], SCENARIO_HIDE_PROC);
         pid_t child = hide_fork_masquerade("[kworker/0:0]", &results[count]);
-        snprintf(action_notes[count], MAX_PATH_LEN, "%s",
+        snprintf(action_notes[count], MAX_PATH_LEN, "%.250s",
                  results[count].detection.notes);
         count++;
 
@@ -185,7 +170,7 @@ int main(int argc, char *argv[])
 
         init_result(&results[count], SCENARIO_HIDE_COMM);
         hide_argv_masquerade("[kworker/0:1]", &results[count]);
-        snprintf(action_notes[count], MAX_PATH_LEN, "%s",
+        snprintf(action_notes[count], MAX_PATH_LEN, "%.250s",
                  results[count].detection.notes);
         count++;
     }
@@ -193,18 +178,47 @@ int main(int argc, char *argv[])
     if (run_bypass && !run_verify_only) {
         init_result(&results[count], SCENARIO_BYPASS_WX);
         bypass_wx_check(&results[count]);
-        snprintf(action_notes[count], MAX_PATH_LEN, "%s",
+        snprintf(action_notes[count], MAX_PATH_LEN, "%.250s",
                  results[count].detection.notes);
         count++;
 
         init_result(&results[count], SCENARIO_BYPASS_ASLR);
         bypass_aslr_assess(&results[count]);
-        snprintf(action_notes[count], MAX_PATH_LEN, "%s",
+        snprintf(action_notes[count], MAX_PATH_LEN, "%.250s",
                  results[count].detection.notes);
         count++;
     }
 
+    if (run_bpf && !run_verify_only) {
+        init_result(&results[count], SCENARIO_BPF_VALIDATE);
+        bpf_validate(&results[count]);
+        snprintf(action_notes[count], MAX_PATH_LEN, "%.250s",
+                 results[count].detection.notes);
+        count++;
+    }
+
+    if (run_yara && !run_verify_only) {
+        init_result(&results[count], SCENARIO_YARA_SCAN);
+        yara_scan(&results[count]);
+        snprintf(action_notes[count], MAX_PATH_LEN, "%.250s",
+                 results[count].detection.notes);
+        count++;
+    }
+
+    if (run_live && !run_verify_only) {
+        for (int i = 0; i < count; i++) {
+            ScenarioResult *r = &results[i];
+            if (r->type == SCENARIO_RWX_ALLOC || r->type == SCENARIO_RWX_EXEC) {
+                verify_live_kscanner(r);
+            }
+            if (r->type == SCENARIO_BYPASS_WX || r->type == SCENARIO_BYPASS_ASLR) {
+                verify_live_linspec(r);
+            }
+        }
+    }
+
     verify_full(results, count);
+
     if (run_verify_only) {
         init_result(&results[0], SCENARIO_BYPASS_WX);
         verify_linspec_hardening(&results[0]);

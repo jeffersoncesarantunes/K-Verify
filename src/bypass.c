@@ -6,11 +6,11 @@ TestResult bypass_wx_check(ScenarioResult *result)
     char buf[MAX_LINE_LEN];
     int wx_enforced = 0;
 
-    if (read_proc_line("/proc/sys/kernel/exec-shield", buf, sizeof(buf)) == 0) {
+    if (read_proc_line(PROC_EXEC_SHIELD, buf, sizeof(buf)) == 0) {
         if (atoi(buf) > 0) wx_enforced = 1;
     }
 
-    if (read_proc_line("/proc/sys/vm/mmap_min_addr", buf, sizeof(buf)) == 0) {
+    if (read_proc_line(PROC_MMAP_MIN_ADDR, buf, sizeof(buf)) == 0) {
         unsigned long min_addr = strtoul(buf, NULL, 10);
         if (min_addr > 0) wx_enforced++;
     }
@@ -48,7 +48,7 @@ TestResult bypass_aslr_assess(ScenarioResult *result)
 {
     char buf[MAX_LINE_LEN];
 
-    if (read_proc_line("/proc/sys/kernel/randomize_va_space", buf, sizeof(buf)) == 0) {
+    if (read_proc_line(PROC_ASLR, buf, sizeof(buf)) == 0) {
         int val = atoi(buf);
         switch (val) {
             case 0:
@@ -82,5 +82,3 @@ TestResult bypass_aslr_assess(ScenarioResult *result)
              "Could not read ASLR state");
     return RESULT_SKIP;
 }
-
-

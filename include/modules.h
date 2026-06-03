@@ -15,8 +15,13 @@ pid_t hide_suspended_child(ScenarioResult *result);
 TestResult bypass_wx_check(ScenarioResult *result);
 TestResult bypass_aslr_assess(ScenarioResult *result);
 
+TestResult bpf_validate(ScenarioResult *result);
+TestResult yara_scan(ScenarioResult *result);
+
 int verify_kscanner_rwx(ScenarioResult *result);
 int verify_linspec_hardening(ScenarioResult *result);
+int verify_live_kscanner(ScenarioResult *result);
+int verify_live_linspec(ScenarioResult *result);
 int verify_full(ScenarioResult *results, int count);
 
 #endif

@@ -21,7 +21,8 @@ pid_t hide_fork_masquerade(const char *new_name, ScenarioResult *result)
         snprintf(proc_path, sizeof(proc_path), "/proc/%d/comm", getpid());
         int fd = open(proc_path, O_WRONLY);
         if (fd >= 0) {
-            write(fd, new_name, strlen(new_name));
+            ssize_t ret = write(fd, new_name, strlen(new_name));
+            (void)ret;
             close(fd);
         }
 
@@ -52,7 +53,6 @@ pid_t hide_fork_masquerade(const char *new_name, ScenarioResult *result)
     }
 
     result->detection.kscanner_detected = result->execution_result == RESULT_PASS;
-
     return child;
 }
 
@@ -69,7 +69,8 @@ int hide_argv_masquerade(const char *new_name, ScenarioResult *result)
 
     int fd = open("/proc/self/cmdline", O_WRONLY);
     if (fd >= 0) {
-        write(fd, fake_name, strlen(fake_name) + 1);
+        ssize_t ret = write(fd, fake_name, strlen(fake_name) + 1);
+        (void)ret;
         close(fd);
     }
 
@@ -94,7 +95,6 @@ int hide_argv_masquerade(const char *new_name, ScenarioResult *result)
     }
 
     result->detection.kscanner_detected = 0;
-
     return 0;
 }
 
@@ -136,6 +136,5 @@ pid_t hide_suspended_child(ScenarioResult *result)
     }
 
     result->detection.kscanner_detected = 1;
-
     return child;
 }

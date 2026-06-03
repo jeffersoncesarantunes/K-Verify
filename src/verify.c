@@ -58,12 +58,11 @@ int verify_linspec_hardening(ScenarioResult *result)
     struct {
         const char *path;
         const char *desc;
-        int *detected;
     } checks[] = {
-        {"/proc/sys/kernel/kptr_restrict",     "kptr_restrict",       NULL},
-        {"/proc/sys/kernel/dmesg_restrict",    "dmesg_restrict",      NULL},
-        {"/proc/sys/kernel/kexec_load_disabled", "kexec_disabled",    NULL},
-        {"/proc/sys/kernel/randomize_va_space", "ASLR",               NULL},
+        {PROC_KPTR_RESTRICT,    "kptr_restrict"},
+        {PROC_DMESG_RESTRICT,   "dmesg_restrict"},
+        {PROC_KEXEC_DISABLED,   "kexec_disabled"},
+        {PROC_ASLR,             "ASLR"},
     };
 
     for (size_t i = 0; i < sizeof(checks) / sizeof(checks[0]); i++) {
@@ -78,14 +77,73 @@ int verify_linspec_hardening(ScenarioResult *result)
     if (vulnerabilities > 0) {
         result->detection.linspec_detected = 1;
         snprintf(result->detection.notes, sizeof(result->detection.notes),
-                 "%d hardening gaps (LinSpec would flag)",
-                 vulnerabilities);
+                 "%d hardening gaps (LinSpec would flag)", vulnerabilities);
         return vulnerabilities;
     }
 
     result->detection.linspec_detected = 0;
     snprintf(result->detection.notes, sizeof(result->detection.notes),
              "Kernel appears hardened (no gaps detected)");
+    return 0;
+}
+
+int verify_live_kscanner(ScenarioResult *result)
+{
+    char cmd[MAX_PATH_LEN];
+    char output[4096];
+
+    snprintf(cmd, sizeof(cmd), "which kscanner 2>/dev/null");
+    if (run_command(cmd, output, sizeof(output)) != 0) {
+        snprintf(result->detection.notes, sizeof(result->detection.notes),
+                 "kscanner not found in PATH");
+        return -1;
+    }
+
+    snprintf(cmd, sizeof(cmd), "kscanner --json 2>/dev/null");
+    int ret = run_command(cmd, output, sizeof(output));
+
+    if (ret != 0) {
+        snprintf(result->detection.notes, sizeof(result->detection.notes),
+                 "kscanner execution failed (exit %d)", ret);
+        return -1;
+    }
+
+    if (strstr(output, "RWX") || strstr(output, "rwx")) {
+        result->detection.kscanner_detected = 1;
+    }
+
+    snprintf(result->detection.notes, sizeof(result->detection.notes),
+             "Live K-Scanner check completed");
+    return 0;
+}
+
+int verify_live_linspec(ScenarioResult *result)
+{
+    char cmd[MAX_PATH_LEN];
+    char output[4096];
+
+    snprintf(cmd, sizeof(cmd), "which linspec 2>/dev/null");
+    if (run_command(cmd, output, sizeof(output)) != 0) {
+        snprintf(result->detection.notes, sizeof(result->detection.notes),
+                 "linspec not found in PATH");
+        return -1;
+    }
+
+    snprintf(cmd, sizeof(cmd), "linspec --json 2>/dev/null");
+    int ret = run_command(cmd, output, sizeof(output));
+
+    if (ret != 0) {
+        snprintf(result->detection.notes, sizeof(result->detection.notes),
+                 "linspec execution failed (exit %d)", ret);
+        return -1;
+    }
+
+    if (strstr(output, "VULN")) {
+        result->detection.linspec_detected = 1;
+    }
+
+    snprintf(result->detection.notes, sizeof(result->detection.notes),
+             "Live LinSpec check completed");
     return 0;
 }
 
@@ -100,7 +158,6 @@ int verify_full(ScenarioResult *results, int count)
             case SCENARIO_RWX_ALLOC:
             case SCENARIO_RWX_EXEC:
                 verify_kscanner_rwx(r);
-
                 if (r->detection.kscanner_detected)
                     r->detection.linspec_detected = 0;
                 break;
@@ -118,6 +175,10 @@ int verify_full(ScenarioResult *results, int count)
             case SCENARIO_BYPASS_ASLR:
                 r->detection.kscanner_detected = 0;
                 verify_linspec_hardening(r);
+                break;
+
+            case SCENARIO_BPF_VALIDATE:
+            case SCENARIO_YARA_SCAN:
                 break;
 
             default:

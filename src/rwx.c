@@ -22,7 +22,6 @@ void *rwx_allocate(size_t size, ScenarioResult *result)
              "RWX region at %p (%zu bytes)", addr, size);
 
     result->detection.kscanner_detected = 1;
-
     return addr;
 }
 
@@ -37,7 +36,6 @@ int rwx_execute(void *addr, size_t size, const unsigned char *shellcode,
     if (sc_len > size) sc_len = size;
 
     memcpy(addr, shellcode, sc_len);
-
     __builtin___clear_cache(addr, (char *)addr + sc_len);
 
     volatile void *fn_addr = addr;

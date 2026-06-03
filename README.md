@@ -1,23 +1,24 @@
-# 🐧 K-Verify
+# K-Verify
 
 Purple Team adversarial validation suite for the SYNTROPY forensic ecosystem.
 
 [![Platform-Linux](https://img.shields.io/badge/Platform-Linux-1793D1?style=flat-square&logo=linux&logoColor=white)](https://kernel.org)
 [![Language-C99](https://img.shields.io/badge/Language-C99-A8B9CC?style=flat-square&logo=c&logoColor=white)](https://gcc.gnu.org/)
 [![License-MIT](https://img.shields.io/badge/License-MIT-EE0000?style=flat-square&logo=license&logoColor=white)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Development-FF8800?style=flat-square)](#-roadmap)
+[![Status](https://img.shields.io/badge/Status-Active-006400?style=flat-square)](#-roadmap)
+[![CI](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?style=flat-square&logo=githubactions)](.github/workflows/ci.yml)
 [![Tested-on](https://img.shields.io/badge/Tested%20on-Arch%20Linux-1793D1?style=flat-square&logo=arch-linux)](https://security.archlinux.org/)
 [![Domain](https://img.shields.io/badge/Domain-Purple%20Team%20%7C%20Adversarial%20Validation-8A2BE2?style=flat-square)](#-overview)
 
 ---
 
-## ● Etymology & Origin
+## Etymology & Origin
 
 The name **K-Verify** derives from the Linux **Kernel** — the foundational interface that underpins all validation logic. The "K" references the Kernel in the same spirit as **K-Scanner**, its sister project in the SYNTROPY ecosystem. Unlike a scanner that enumerates state, K-Verify *verifies*: it actively tests whether detection mechanisms correctly identify adversarial behavior on a live system.
 
 ---
 
-## ● Overview
+## Overview
 
 K-Verify is a Purple Team adversarial validation tool designed to stress-test the detection capabilities of the SYNTROPY forensic ecosystem — **K-Scanner** and **LinSpec**.
 
@@ -28,14 +29,20 @@ It executes controlled adversarial actions on a live Linux system and then cross
 * **RWX Memory Detection:** Allocates writable+executable memory and verifies K-Scanner detection
 * **Process Masquerading:** Forks and renames processes to test /proc enumeration accuracy
 * **Mitigation Bypass:** Attempts W^X and ASLR bypass and validates LinSpec auditing
+* **eBPF Telemetry Validation:** Checks kernel BTF and BPF JIT state for eBPF readiness
+* **YARA Rule Detection:** Validates YARA pattern matching against known shellcode signatures
+* **Live Tool Integration:** Optionally invokes real K-Scanner/LinSpec binaries for actual detection testing
 * **Detection Gap Analysis:** Counts scenarios with zero detection coverage (neither K-Scanner nor LinSpec)
 * **MITRE ATT&CK Correlation:** Each adversarial technique mapped to its MITRE technique ID
 
 ---
 
-## ● Features
+## Features
 
-* Six adversarial scenarios mapped to MITRE ATT&CK technique IDs
+* Eight adversarial scenarios mapped to MITRE ATT&CK technique IDs
+* eBPF telemetry validation (`--bpf`) — detects kernel BTF and BPF JIT readiness
+* YARA rule detection test (`--yara`) — validates YARA engine with known shellcode patterns
+* Live tool integration (`--live`) — invokes actual K-Scanner/LinSpec binaries
 * Automated verification against K-Scanner and LinSpec detection logic
 * Purple Team validation matrix with color-coded terminal output
 * **Detection Gap Analysis** — identifies blind spots with no tool coverage
@@ -43,12 +50,14 @@ It executes controlled adversarial actions on a live Linux system and then cross
 * **Silent JSON mode** (`--json`) — suppress banner output for CI/CD pipelines
 * Structured export (JSON/CSV) for integration into reporting pipelines
 * Modular C99 engine — each scenario is an independent module
+* Automated unit test suite with `make test`
+* CI/CD pipeline via GitHub Actions
 * Read-only verification phase that assesses system state without executing attacks
 * Child process lifecycle management with cleanup mode
 
 ---
 
-## ● MITRE ATT&CK Mapping
+## MITRE ATT&CK Mapping
 
 Each scenario is correlated with a real-world MITRE ATT&CK technique:
 
@@ -60,12 +69,14 @@ Each scenario is correlated with a real-world MITRE ATT&CK technique:
 | HIDE_COMM | [T1564](https://attack.mitre.org/techniques/T1564/) | Hide Artifacts |
 | BYPASS_WX | [T1562.001](https://attack.mitre.org/techniques/T1562/001/) | Impair Defenses: Disable or Modify Tools |
 | BYPASS_ASLR | [T1562.001](https://attack.mitre.org/techniques/T1562/001/) | Impair Defenses: Disable or Modify Tools |
+| BPF_VALIDATE | [T1059](https://attack.mitre.org/techniques/T1059/) | Command and Scripting Interpreter |
+| YARA_SCAN | [T1560](https://attack.mitre.org/techniques/T1560/) | Archive Collected Data |
 
 Technique IDs are displayed in the terminal output, embedded in JSON export, and included in CSV reports.
 
 ---
 
-## ● Example Output
+## Example Output
 
 ```
         ╔═══════════════════════════════════╗
@@ -78,21 +89,23 @@ Technique IDs are displayed in the terminal output, embedded in JSON export, and
     RUN SEQUENCE INITIATED
   ══════════════════════════════════════════════════════════════════════════
 
-  [01/06] RWX_ALLOC ......  PASS  [KS:✔  LS:✘]  T1055.001
-  [02/06] RWX_EXEC .......  PASS  [KS:✔  LS:✘]  T1055
-  [03/06] HIDE_PROC ......  PASS  [KS:✔  LS:✘]  T1564
-  [04/06] HIDE_COMM ......  WARN  [KS:✘  LS:✘]  T1564
-  [05/06] BYPASS_WX ......  PASS  [KS:✘  LS:✔]  T1562.001
-  [06/06] BYPASS_ASLR ....  FAIL  [KS:✘  LS:✔]  T1562.001
+  [01/08] RWX_ALLOC ......  PASS  [KS:✔  LS:✘]  T1055.001
+  [02/08] RWX_EXEC .......  PASS  [KS:✔  LS:✘]  T1055
+  [03/08] HIDE_PROC ......  PASS  [KS:✔  LS:✘]  T1564
+  [04/08] HIDE_COMM ......  WARN  [KS:✘  LS:✘]  T1564
+  [05/08] BYPASS_WX ......  PASS  [KS:✘  LS:✔]  T1562.001
+  [06/08] BYPASS_ASLR ....  FAIL  [KS:✘  LS:✔]  T1562.001
+  [07/08] BPF_VALIDATE ...  PASS  [KS:✔  LS:✘]  T1059
+  [08/08] YARA_SCAN ......  SKIP  [KS:✘  LS:✘]  T1560
 
   ══════════════════════════════════════════════════════════════════════════
     FINAL ASSESSMENT
   ══════════════════════════════════════════════════════════════════════════
 
-  [██████░░░░]  4/6  (66%)  adversarial actions succeeded
-  [█░░░░░░░░░]  1/6  (16%)  detected by K-Scanner
-  [██░░░░░░░░]  2/6  (33%)  detected by LinSpec
-  [█████░░░░░]  3/6  (50%)  unmonitored gaps (no KS or LS coverage)
+  [██████░░░░]  4/8  (50%)  adversarial actions succeeded
+  [██░░░░░░░░]  2/8  (25%)  detected by K-Scanner
+  [█░░░░░░░░░]  1/8  (12%)  detected by LinSpec
+  [██████░░░░]  4/8  (50%)  unmonitored gaps (no KS or LS coverage)
 
    STATUS:  Purple Team Validation Complete
   ══════════════════════════════════════════════════════════════════════════
@@ -100,7 +113,7 @@ Technique IDs are displayed in the terminal output, embedded in JSON export, and
 
 ---
 
-## ● How It Works
+## How It Works
 
 K-Verify operates in three phases:
 
@@ -114,6 +127,8 @@ Each scenario executes a controlled offensive technique:
 * **HIDE_COMM:** Direct write to `/proc/self/cmdline`
 * **BYPASS_WX:** Attempt RWX mmap, test enforcement
 * **BYPASS_ASLR:** Read `randomize_va_space`
+* **BPF_VALIDATE:** Check kernel BTF and BPF JIT hardening state
+* **YARA_SCAN:** Compile and run YARA rule against test shellcode
 
 ### Phase 2: Detection
 
@@ -122,7 +137,7 @@ For each scenario, K-Verify queries the kernel interfaces that the target Blue T
 * **K-Scanner path:** Parses `/proc/[PID]/maps` for `rwx` permission entries
 * **LinSpec path:** Reads `/proc/sys/kernel/*` hardening parameters
 
-**Note:** K-Scanner and LinSpec are reference tools from the [SYNTROPY](https://github.com/jeffersoncesarantunes) forensic ecosystem. They are **not required** to run K-Verify. The detection logic for both tools is embedded directly in K-Verify's own source code — it reads the same kernel interfaces they would use and *predicts* whether detection would occur. This makes K-Verify a fully self-contained binary with no external dependencies beyond the Linux kernel itself. The results shown in the "KS" and "LS" columns are a **synthetic detection assessment**, not a live integration with external tools.
+**Note:** K-Scanner and LinSpec are reference tools from the SYNTROPY forensic ecosystem. They are **not required** to run K-Verify. The detection logic for both tools is embedded directly in K-Verify's own source code — it reads the same kernel interfaces they would use and *predicts* whether detection would occur. When `--live` is passed, K-Verify optionally invokes the actual K-Scanner and LinSpec binaries for real validation.
 
 ### Phase 3: Correlation
 
@@ -137,13 +152,9 @@ Results are presented as a **validation matrix** showing:
 
 The final assessment includes a dedicated metric: **unmonitored gaps** — scenarios where neither K-Scanner nor LinSpec provides detection coverage. These represent the highest-risk blind spots in your detection posture.
 
-```
-[█████░░░░░]  3/6  (50%)  unmonitored gaps (no KS or LS coverage)
-```
-
 ---
 
-## ● Build and Run
+## Build and Run
 
 ```bash
 # Clone the repository
@@ -152,6 +163,9 @@ cd K-Verify
 
 # Build the project
 make clean && make
+
+# Run the test suite
+make test
 
 # Run all scenarios with default terminal output
 sudo ./kverify
@@ -166,6 +180,11 @@ sudo ./kverify --csv
 sudo ./kverify --rwx
 sudo ./kverify --hide
 sudo ./kverify --bypass
+sudo ./kverify --bpf
+sudo ./kverify --yara
+
+# Run with live K-Scanner/LinSpec integration
+sudo ./kverify --live
 
 # Read-only verification (no adversarial actions)
 sudo ./kverify --verify-only
@@ -178,7 +197,7 @@ sudo ./kverify --cleanup
 
 ---
 
-## ● Post-Analysis & Report Viewing
+## Post-Analysis & Report Viewing
 
 After generating the reports, you can quickly inspect them directly from the terminal using standard Linux utilities:
 
@@ -192,20 +211,7 @@ cat kverify-report.json | head -n 15
 
 ---
 
-## ● Project in Action
-
-![Purple Team Matrix](./Imagens/kverify1.png)
-*1 - Complete dashboard output showing all validation scenarios, tool coverage, and final metrics.*
-
-![RWX Detection Test](./Imagens/kverify2.png)
-*2 - Running a specific module (`--rwx`) alongside code-level analysis of `rwx.c`.*
-
-![Post-Analysis Workspace](./Imagens/kverify3.png)
-*3 - Post-analysis workspace in `tmux` formatting the generated CSV and JSON reports.*
-
----
-
-## ● Operational Integrity
+## Operational Integrity
 
 K-Verify is designed for controlled adversarial testing:
 
@@ -219,7 +225,7 @@ K-Verify is designed for controlled adversarial testing:
 
 ---
 
-## ● Deployment
+## Deployment
 
 ### Requirements
 
@@ -228,12 +234,17 @@ K-Verify is designed for controlled adversarial testing:
 * make
 * Root privileges (for /proc access and mmap tests)
 * UTF-8 compatible terminal
+* yara + yarac (optional, for `--yara`)
+* kscanner (optional, for `--live`)
+* linspec (optional, for `--live`)
 
 ---
 
-## ● Repository Structure
+## Repository Structure
 
 ```text
+├── .github/workflows/
+│   └── ci.yml                     CI/CD pipeline
 ├── build/
 │   └── obj/
 ├── docs/
@@ -249,15 +260,19 @@ K-Verify is designed for controlled adversarial testing:
 │   ├── kverify.h
 │   └── modules.h
 ├── reports/
-├── scenarios/
 ├── src/
+│   ├── bpf_validate.c
 │   ├── bypass.c
 │   ├── hide.c
 │   ├── main.c
 │   ├── rwx.c
 │   ├── utils.c
-│   └── verify.c
+│   ├── verify.c
+│   └── yara_scan.c
 ├── tests/
+│   ├── .gitkeep
+│   └── test_utils.c
+├── .gitignore
 ├── LICENSE
 ├── Makefile
 └── README.md
@@ -265,16 +280,17 @@ K-Verify is designed for controlled adversarial testing:
 
 ---
 
-## ● Tech Stack
+## Tech Stack
 
 * **Language:** C99
 * **Data Sources:** `/proc`, `mmap`, `prctl`
 * **Build Tool:** GNU Make
+* **Test Framework:** Custom C test harness
 * **Target Platforms:** Linux Kernel 5.x / 6.x
 
 ---
 
-## ● Roadmap
+## Roadmap
 
 * [x] Modular C99 engine with RWX, hide, and bypass modules
 * [x] Verification engine cross-referencing K-Scanner and LinSpec
@@ -283,13 +299,16 @@ K-Verify is designed for controlled adversarial testing:
 * [x] Detection Gap Analysis (unmonitored blind spots)
 * [x] Silent JSON mode for CI/CD pipelines
 * [x] `--verify-only` read-only assessment mode
-* [ ] eBPF-based detection validation (K-Scanner integration)
-* [ ] YARA rule-based detection pattern matching
+* [x] eBPF-based detection validation (`--bpf`)
+* [x] YARA rule-based detection pattern matching (`--yara`)
+* [x] Live tool integration (`--live`)
+* [x] Automated test suite (`make test`)
+* [x] CI/CD pipeline (GitHub Actions)
 * [ ] Multi-process coordinated attack scenarios
 
 ---
 
-## ● Documentation
+## Documentation
 
 [![Docs-Purple](https://img.shields.io/badge/Purple-Model-8A2BE2?style=flat-square\&logo=target\&logoColor=white)](./docs/PURPLE_MODEL.md)
 [![Docs-Scenarios](https://img.shields.io/badge/Adversarial-Scenarios-CC0000?style=flat-square\&logo=linux\&logoColor=white)](./docs/ADVERSARIAL_SCENARIOS.md)
@@ -297,7 +316,7 @@ K-Verify is designed for controlled adversarial testing:
 
 ---
 
-## ● License
+## License
 
 [![License-MIT](https://img.shields.io/badge/License-MIT-EE0000?style=flat-square\&logo=opensourceinitiative\&logoColor=white)](./LICENSE)
 
