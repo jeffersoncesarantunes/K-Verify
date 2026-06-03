@@ -263,6 +263,45 @@ void export_results_compact(ScenarioResult *results, int count,
     printf("\n");
 }
 
+static void write_json_escaped(FILE *f, const char *s)
+{
+    putc('"', f);
+    while (*s) {
+        switch (*s) {
+            case '"':  fprintf(f, "\\\""); break;
+            case '\\': fprintf(f, "\\\\"); break;
+            case '\n': fprintf(f, "\\n");  break;
+            case '\r': fprintf(f, "\\r");  break;
+            case '\t': fprintf(f, "\\t");  break;
+            default:   putc(*s, f);        break;
+        }
+        s++;
+    }
+    putc('"', f);
+}
+
+static void write_csv_field(FILE *f, const char *s)
+{
+    int needs_quote = 0;
+    for (const char *p = s; *p; p++) {
+        if (*p == ',' || *p == '"' || *p == '\n' || *p == '\r') {
+            needs_quote = 1;
+            break;
+        }
+    }
+    if (needs_quote) {
+        putc('"', f);
+        while (*s) {
+            if (*s == '"') fprintf(f, "\"\"");
+            else putc(*s, f);
+            s++;
+        }
+        putc('"', f);
+    } else {
+        fprintf(f, "%s", s);
+    }
+}
+
 void export_results_json(ScenarioResult *results, int count, const char *filename)
 {
     FILE *f = fopen(filename, "w");
@@ -289,7 +328,9 @@ void export_results_json(ScenarioResult *results, int count, const char *filenam
         fprintf(f, "        \"linspec\": %s\n",
                 r->detection.linspec_detected ? "true" : "false");
         fprintf(f, "      },\n");
-        fprintf(f, "      \"notes\": \"%s\"\n", r->detection.notes);
+        fprintf(f, "      \"notes\": ");
+        write_json_escaped(f, r->detection.notes);
+        fprintf(f, "\n");
         fprintf(f, "    }%s\n", (i + 1 < count) ? "," : "");
     }
 
@@ -311,13 +352,14 @@ void export_results_csv(ScenarioResult *results, int count, const char *filename
     for (int i = 0; i < count; i++) {
         ScenarioResult *r = &results[i];
         int c_idx = (r->type >= 0 && r->type < SCENARIO_COUNT) ? r->type : 0;
-        fprintf(f, "%s,%s,%s,%d,%d,%s\n",
+        fprintf(f, "%s,%s,%s,%d,%d,",
                 scenario_names[r->type],
                 mitre_ids[c_idx],
                 result_label(r->execution_result),
                 r->detection.kscanner_detected,
-                r->detection.linspec_detected,
-                r->detection.notes);
+                r->detection.linspec_detected);
+        write_csv_field(f, r->detection.notes);
+        fprintf(f, "\n");
     }
 
     fclose(f);

@@ -1,4 +1,4 @@
-# K-Verify
+# 🐧 K-Verify
 
 Purple Team adversarial validation suite for the SYNTROPY forensic ecosystem.
 
@@ -12,13 +12,13 @@ Purple Team adversarial validation suite for the SYNTROPY forensic ecosystem.
 
 ---
 
-## Etymology & Origin
+## ● Etymology & Origin
 
 The name **K-Verify** derives from the Linux **Kernel** — the foundational interface that underpins all validation logic. The "K" references the Kernel in the same spirit as **K-Scanner**, its sister project in the SYNTROPY ecosystem. Unlike a scanner that enumerates state, K-Verify *verifies*: it actively tests whether detection mechanisms correctly identify adversarial behavior on a live system.
 
 ---
 
-## Overview
+## ● Overview
 
 K-Verify is a Purple Team adversarial validation tool designed to stress-test the detection capabilities of the SYNTROPY forensic ecosystem — **K-Scanner** and **LinSpec**.
 
@@ -37,7 +37,7 @@ It executes controlled adversarial actions on a live Linux system and then cross
 
 ---
 
-## Features
+## ● Features
 
 * Eight adversarial scenarios mapped to MITRE ATT&CK technique IDs
 * eBPF telemetry validation (`--bpf`) — detects kernel BTF and BPF JIT readiness
@@ -57,7 +57,7 @@ It executes controlled adversarial actions on a live Linux system and then cross
 
 ---
 
-## MITRE ATT&CK Mapping
+## ● MITRE ATT&CK Mapping
 
 Each scenario is correlated with a real-world MITRE ATT&CK technique:
 
@@ -76,7 +76,7 @@ Technique IDs are displayed in the terminal output, embedded in JSON export, and
 
 ---
 
-## Example Output
+## ● Example Output
 
 ```
         ╔═══════════════════════════════════╗
@@ -113,7 +113,7 @@ Technique IDs are displayed in the terminal output, embedded in JSON export, and
 
 ---
 
-## How It Works
+## ● How It Works
 
 K-Verify operates in three phases:
 
@@ -154,7 +154,7 @@ The final assessment includes a dedicated metric: **unmonitored gaps** — scena
 
 ---
 
-## Build and Run
+## ● Build and Run
 
 ```bash
 # Clone the repository
@@ -197,7 +197,7 @@ sudo ./kverify --cleanup
 
 ---
 
-## Post-Analysis & Report Viewing
+## ● Post-Analysis & Report Viewing
 
 After generating the reports, you can quickly inspect them directly from the terminal using standard Linux utilities:
 
@@ -211,7 +211,7 @@ cat kverify-report.json | head -n 15
 
 ---
 
-## Operational Integrity
+## ● Operational Integrity
 
 K-Verify is designed for controlled adversarial testing:
 
@@ -225,7 +225,7 @@ K-Verify is designed for controlled adversarial testing:
 
 ---
 
-## Deployment
+## ● Deployment
 
 ### Requirements
 
@@ -240,7 +240,7 @@ K-Verify is designed for controlled adversarial testing:
 
 ---
 
-## Repository Structure
+## ● Repository Structure
 
 ```text
 ├── .github/workflows/
@@ -280,7 +280,7 @@ K-Verify is designed for controlled adversarial testing:
 
 ---
 
-## Tech Stack
+## ● Tech Stack
 
 * **Language:** C99
 * **Data Sources:** `/proc`, `mmap`, `prctl`
@@ -290,7 +290,7 @@ K-Verify is designed for controlled adversarial testing:
 
 ---
 
-## Roadmap
+## ● Roadmap
 
 * [x] Modular C99 engine with RWX, hide, and bypass modules
 * [x] Verification engine cross-referencing K-Scanner and LinSpec
@@ -308,7 +308,7 @@ K-Verify is designed for controlled adversarial testing:
 
 ---
 
-## Documentation
+## ● Documentation
 
 [![Docs-Purple](https://img.shields.io/badge/Purple-Model-8A2BE2?style=flat-square\&logo=target\&logoColor=white)](./docs/PURPLE_MODEL.md)
 [![Docs-Scenarios](https://img.shields.io/badge/Adversarial-Scenarios-CC0000?style=flat-square\&logo=linux\&logoColor=white)](./docs/ADVERSARIAL_SCENARIOS.md)
@@ -316,7 +316,7 @@ K-Verify is designed for controlled adversarial testing:
 
 ---
 
-## License
+## ● License
 
 [![License-MIT](https://img.shields.io/badge/License-MIT-EE0000?style=flat-square\&logo=opensourceinitiative\&logoColor=white)](./LICENSE)
 

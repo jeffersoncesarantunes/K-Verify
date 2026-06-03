@@ -35,35 +35,55 @@ TestResult yara_scan(ScenarioResult *result)
 
     const char *test_data = "\x90\x90\x90\xb8\x3c\x00\x00\x00\x48\x31\xff\x0f\x05";
 
-    FILE *f = fopen("/tmp/kv_yara_rule.yar", "w");
-    if (!f) {
+    char rule_path[] = "/tmp/kv_yara_rule_XXXXXX";
+    char data_path[] = "/tmp/kv_yara_data_XXXXXX";
+    int rule_fd = mkstemp(rule_path);
+    int data_fd = mkstemp(data_path);
+
+    if (rule_fd < 0 || data_fd < 0) {
+        if (rule_fd >= 0) close(rule_fd);
+        if (data_fd >= 0) close(data_fd);
         result->execution_result = RESULT_ERROR;
         snprintf(result->detection.notes, sizeof(result->detection.notes),
-                 "Could not write test rule");
+                 "Could not create temp files");
+        return RESULT_ERROR;
+    }
+
+    FILE *f = fdopen(rule_fd, "w");
+    if (!f) {
+        close(rule_fd);
+        unlink(rule_path);
+        close(data_fd);
+        unlink(data_path);
+        result->execution_result = RESULT_ERROR;
+        snprintf(result->detection.notes, sizeof(result->detection.notes),
+                 "Could not open rule temp file");
         return RESULT_ERROR;
     }
     fprintf(f, "%s", test_rule);
     fclose(f);
 
-    f = fopen("/tmp/kv_yara_test.bin", "wb");
-    if (!f) {
+    FILE *df = fdopen(data_fd, "wb");
+    if (!df) {
+        close(data_fd);
+        unlink(data_path);
+        unlink(rule_path);
         result->execution_result = RESULT_ERROR;
         snprintf(result->detection.notes, sizeof(result->detection.notes),
-                 "Could not write test data");
-        unlink("/tmp/kv_yara_rule.yar");
+                 "Could not open data temp file");
         return RESULT_ERROR;
     }
-    fwrite(test_data, 1, 13, f);
-    fclose(f);
+    fwrite(test_data, 1, 13, df);
+    fclose(df);
 
-    char cmd[256];
+    char cmd[512];
     snprintf(cmd, sizeof(cmd),
-             "yara /tmp/kv_yara_rule.yar /tmp/kv_yara_test.bin 2>/dev/null");
+             "yara %s %s 2>/dev/null", rule_path, data_path);
 
     ret = run_command(cmd, output, sizeof(output));
 
-    unlink("/tmp/kv_yara_rule.yar");
-    unlink("/tmp/kv_yara_test.bin");
+    unlink(rule_path);
+    unlink(data_path);
 
     if (ret == 0 && strlen(output) > 0) {
         result->execution_result = RESULT_PASS;

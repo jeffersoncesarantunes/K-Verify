@@ -17,12 +17,14 @@ The core principle: **every attack tests a specific defense**, and every result 
 ### Attack-Defense Mapping
 
 | Adversarial Action | Blue Tool | Detection Mechanism |
-|---|---|---|
+|---|---|---|---|
 | RWX mmap | K-Scanner | /proc/[PID]/maps permission parsing |
 | Shellcode execution | K-Scanner | RWX + writable + executable region detection |
 | Process masquerading | K-Scanner | /proc/[PID]/comm and cmdline validation |
 | W^X bypass attempt | LinSpec | kernel.exec-shield, mmap_min_addr |
 | ASLR state change | LinSpec | randomize_va_space audit |
+| eBPF readiness | K-Scanner | BTF availability + BPF JIT hardening |
+| YARA signature match | K-Scanner | YARA rule engine against memory dumps |
 
 ## Classification
 

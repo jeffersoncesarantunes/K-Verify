@@ -102,3 +102,46 @@ syscall
 **Red Perspective:** ASLR=0 means no address randomization — exploit development is significantly easier.
 
 **Blue Perspective (LinSpec):** Flags `randomize_va_space=0` as VULN.
+
+---
+
+## Scenario 7: BPF_VALIDATE
+
+**Objective:** Check if the kernel supports eBPF-based detection that K-Scanner uses.
+
+**MITRE ATT&CK:** [T1059](https://attack.mitre.org/techniques/T1059/) — Command and Scripting Interpreter
+
+**Technique:**
+1. Check existence of `/sys/kernel/btf/vmlinux` (BPF Type Format)
+2. Read `/proc/sys/net/core/bpf_jit_harden` for JIT hardening state
+
+**Red Perspective:** If eBPF is available, K-Scanner can use real-time kernel telemetry to detect RWX events at the syscall level.
+
+**Blue Perspective (K-Scanner):** K-Scanner's `--bpf` flag uses eBPF `raw_tp/sys_enter` to monitor mmap/mprotect/shmat in real-time, bypassing /proc parsing limitations.
+
+**Expected Result:**
+- BTF available + BPF JIT active: PASS, eBPF telemetry is viable
+- BTF missing or JIT disabled: WARN, partial eBPF support
+- Neither available: FAIL, eBPF telemetry cannot function
+
+---
+
+## Scenario 8: YARA_SCAN
+
+**Objective:** Test YARA rule detection against known shellcode patterns.
+
+**MITRE ATT&CK:** [T1560](https://attack.mitre.org/techniques/T1560/) — Archive Collected Data
+
+**Technique:**
+1. Generate a temporary YARA rule targeting NOP+exit(0) shellcode pattern
+2. Create a binary file containing the shellcode
+3. Run `yara` against the test file
+4. Clean up temporary files
+
+**Red Perspective:** YARA allows blue teams to define arbitrary binary signatures for memory scanning.
+
+**Blue Perspective (K-Scanner):** K-Scanner's `--yara <rule.yara>` flag applies YARA rules to forensic memory dumps.
+
+**Expected Result:**
+- yara+yarac installed: PASS if rule matches, WARN if no match
+- yara not installed: SKIP

@@ -68,16 +68,18 @@ RWX_ALLOC            | PASS      | DETECT    | MISS    | RWX region at 0x7f...
 ## Scenario-Specific Validation Rules
 
 | Scenario | K-Scanner | LinSpec |
-|---|---|---|
+|---|---|---|---|
 | RWX_ALLOC | /proc/self/maps rwx count | Not checked |
 | RWX_EXEC | /proc/self/maps rwx count | Not checked |
 | HIDE_PROC | /proc/child/comm match | Not checked |
 | HIDE_COMM | /proc/self/cmdline | Not checked |
 | BYPASS_WX | Not checked | hardening parameters |
 | BYPASS_ASLR | Not checked | randomize_va_space |
+| BPF_VALIDATE | BTF + bpf_jit_harden sysctl | Not checked |
+| YARA_SCAN | YARA rule match result | Not checked |
 
 ## Limitations
 
-- **Synthetic Detection:** K-Verify detects what K-Scanner *would* detect, not what K-Scanner actually detects. True validation requires running K-Scanner in parallel.
+- **Synthetic Detection:** K-Verify detects what K-Scanner *would* detect, not what K-Scanner actually detects. True validation requires running K-Scanner in parallel. The `--live` flag partially addresses this by optionally invoking real K-Scanner and LinSpec binaries when available in $PATH.
 - **Single-Host Scope:** No network-based attack or detection validation.
 - **No Persistence:** All adversarial actions are ephemeral — no persistence mechanism is tested.
