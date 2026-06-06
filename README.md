@@ -199,10 +199,7 @@ sudo ./kverify --cleanup
 
 ```bash
 # Install YARA (optional, required for --yara)
-# Arch Linux
 sudo pacman -S yara
-# Debian/Ubuntu
-sudo apt install yara
 ```
 
 **JSON silent mode:** When `--json` is used alone, the tool skips the banner and terminal output entirely, writing only the JSON report file. This is designed for automated pipelines, cron jobs, and CI/CD integration.
