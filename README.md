@@ -193,6 +193,18 @@ sudo ./kverify --verify-only
 sudo ./kverify --cleanup
 ```
 
+### YARA Rule Detection
+
+[YARA](https://virustotal.github.io/yara/) is a pattern-matching engine for malware identification. K-Verify uses it to validate that YARA rules correctly detect shellcode patterns in memory. Required for the `--yara` scenario and `YARA_SCAN` tests.
+
+```bash
+# Install YARA (optional, required for --yara)
+# Arch Linux
+sudo pacman -S yara
+# Debian/Ubuntu
+sudo apt install yara
+```
+
 **JSON silent mode:** When `--json` is used alone, the tool skips the banner and terminal output entirely, writing only the JSON report file. This is designed for automated pipelines, cron jobs, and CI/CD integration.
 
 ---
