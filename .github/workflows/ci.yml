@@ -21,3 +21,7 @@ jobs:
         run: ./kverify --help
       - name: Check for banned functions
         run: '! grep -rn "\<gets(" src/ include/ || exit 1'
+      - name: Shellcheck (if scripts present)
+        run: |
+          shellcheck --version
+          if ls scripts/*.sh 2>/dev/null; then shellcheck scripts/*.sh; fi
