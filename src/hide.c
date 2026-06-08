@@ -21,8 +21,8 @@ pid_t hide_fork_masquerade(const char *new_name, ScenarioResult *result)
         snprintf(proc_path, sizeof(proc_path), "/proc/%d/comm", getpid());
         int fd = open(proc_path, O_WRONLY);
         if (fd >= 0) {
-            ssize_t ret = write(fd, new_name, strlen(new_name));
-            (void)ret;
+            ssize_t w = write(fd, new_name, strlen(new_name));
+            if (w <= 0) { close(fd); _exit(1); }
             close(fd);
         }
 
@@ -69,8 +69,8 @@ int hide_argv_masquerade(const char *new_name, ScenarioResult *result)
 
     int fd = open("/proc/self/cmdline", O_WRONLY);
     if (fd >= 0) {
-        ssize_t ret = write(fd, fake_name, strlen(fake_name) + 1);
-        (void)ret;
+        ssize_t w = write(fd, fake_name, strlen(fake_name) + 1);
+        if (w <= 0) { close(fd); return -1; }
         close(fd);
     }
 

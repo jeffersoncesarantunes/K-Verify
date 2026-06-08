@@ -5,7 +5,7 @@ TestResult yara_scan(ScenarioResult *result)
 {
     char output[4096];
 
-    int ret = run_command("test -x /usr/bin/yara 2>/dev/null", output, sizeof(output));
+    int ret = run_command((char *[]){"which", "yara", NULL}, output, sizeof(output));
     if (ret != 0) {
         result->execution_result = RESULT_SKIP;
         result->detection.kscanner_detected = 0;
@@ -14,7 +14,7 @@ TestResult yara_scan(ScenarioResult *result)
         return RESULT_SKIP;
     }
 
-    ret = run_command("test -x /usr/bin/yarac 2>/dev/null", output, sizeof(output));
+    ret = run_command((char *[]){"which", "yarac", NULL}, output, sizeof(output));
     if (ret != 0) {
         result->execution_result = RESULT_SKIP;
         result->detection.kscanner_detected = 0;
@@ -76,11 +76,7 @@ TestResult yara_scan(ScenarioResult *result)
     fwrite(test_data, 1, 13, df);
     fclose(df);
 
-    char cmd[512];
-    snprintf(cmd, sizeof(cmd),
-             "/usr/bin/yara %s %s 2>/dev/null", rule_path, data_path);
-
-    ret = run_command(cmd, output, sizeof(output));
+    ret = run_command((char *[]){"yara", rule_path, data_path, NULL}, output, sizeof(output));
 
     unlink(rule_path);
     unlink(data_path);

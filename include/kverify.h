@@ -74,7 +74,7 @@ typedef enum {
 void trim_newline(char *s);
 int read_proc_line(const char *path, char *buf, size_t size);
 int path_exists(const char *path);
-int run_command(const char *cmd, char *output, size_t out_size);
+int run_command(char *const argv[], char *output, size_t out_size);
 
 void export_results_terminal(ScenarioResult *results, int count);
 void export_results_compact(ScenarioResult *results, int count,

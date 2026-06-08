@@ -86,6 +86,10 @@ int main(int argc, char *argv[])
         }
         if (strcmp(argv[i], "--output") == 0 && i + 1 < argc) {
             output_prefix = argv[++i];
+            if (strchr(output_prefix, '/') || strcmp(output_prefix, "..") == 0 || strncmp(output_prefix, "../", 3) == 0) {
+                fprintf(stderr, "Error: --output must be a filename, not a path\n");
+                return 1;
+            }
             continue;
         }
         fprintf(stderr, "Unknown option: %s\n", argv[i]);

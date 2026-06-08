@@ -10,8 +10,6 @@ void rwx_release(void *addr, size_t size);
 
 pid_t hide_fork_masquerade(const char *new_name, ScenarioResult *result);
 int hide_argv_masquerade(const char *new_name, ScenarioResult *result);
-pid_t hide_suspended_child(ScenarioResult *result);
-
 TestResult bypass_wx_check(ScenarioResult *result);
 TestResult bypass_aslr_assess(ScenarioResult *result);
 

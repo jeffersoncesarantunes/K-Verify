@@ -87,20 +87,22 @@ int verify_linspec_hardening(ScenarioResult *result)
     return 0;
 }
 
+static int find_in_path(const char *binary) {
+    char which_out[256];
+    int ret = run_command((char *[]){"which", (char *)binary, NULL}, which_out, sizeof(which_out));
+    return (ret == 0);
+}
+
 int verify_live_kscanner(ScenarioResult *result)
 {
-    char cmd[MAX_PATH_LEN];
-    char output[4096];
-
-    snprintf(cmd, sizeof(cmd), "which kscanner 2>/dev/null");
-    if (run_command(cmd, output, sizeof(output)) != 0) {
+    if (!find_in_path("kscanner")) {
         snprintf(result->detection.notes, sizeof(result->detection.notes),
                  "kscanner not found in PATH");
         return -1;
     }
 
-    snprintf(cmd, sizeof(cmd), "kscanner --json 2>/dev/null");
-    int ret = run_command(cmd, output, sizeof(output));
+    char output[4096];
+    int ret = run_command((char *[]){"kscanner", "--json", NULL}, output, sizeof(output));
 
     if (ret != 0) {
         snprintf(result->detection.notes, sizeof(result->detection.notes),
@@ -108,7 +110,7 @@ int verify_live_kscanner(ScenarioResult *result)
         return -1;
     }
 
-    if (strstr(output, "RWX") || strstr(output, "rwx")) {
+    if (strstr(output, "\"status\": \"RWX ALERT\"") || strstr(output, "\"confidence\": \"CRITICAL\"")) {
         result->detection.kscanner_detected = 1;
     }
 
@@ -119,18 +121,14 @@ int verify_live_kscanner(ScenarioResult *result)
 
 int verify_live_linspec(ScenarioResult *result)
 {
-    char cmd[MAX_PATH_LEN];
-    char output[4096];
-
-    snprintf(cmd, sizeof(cmd), "which linspec 2>/dev/null");
-    if (run_command(cmd, output, sizeof(output)) != 0) {
+    if (!find_in_path("linspec")) {
         snprintf(result->detection.notes, sizeof(result->detection.notes),
                  "linspec not found in PATH");
         return -1;
     }
 
-    snprintf(cmd, sizeof(cmd), "linspec --json 2>/dev/null");
-    int ret = run_command(cmd, output, sizeof(output));
+    char output[4096];
+    int ret = run_command((char *[]){"linspec", "--json", NULL}, output, sizeof(output));
 
     if (ret != 0) {
         snprintf(result->detection.notes, sizeof(result->detection.notes),
@@ -138,7 +136,7 @@ int verify_live_linspec(ScenarioResult *result)
         return -1;
     }
 
-    if (strstr(output, "VULN")) {
+    if (strstr(output, "\"vuln\":") && !strstr(output, "\"vuln\": 0")) {
         result->detection.linspec_detected = 1;
     }
 

@@ -36,7 +36,8 @@ int read_proc_line(const char *path, char *buf, size_t size)
     if (fd < 0) return -1;
 
     ssize_t n = read(fd, buf, size - 1);
-    close(fd);
+    int close_ret = close(fd);
+    (void)close_ret;
 
     if (n <= 0) return -1;
 
@@ -50,20 +51,39 @@ int path_exists(const char *path)
     return access(path, F_OK) == 0;
 }
 
-int run_command(const char *cmd, char *output, size_t out_size)
+int run_command(char *const argv[], char *output, size_t out_size)
 {
-    FILE *fp = popen(cmd, "r");
-    if (!fp) return -1;
+    int pipefd[2];
+    if (pipe(pipefd) == -1) return -1;
 
+    pid_t pid = fork();
+    if (pid == -1) {
+        close(pipefd[0]);
+        close(pipefd[1]);
+        return -1;
+    }
+
+    if (pid == 0) {
+        close(pipefd[0]);
+        if (dup2(pipefd[1], STDOUT_FILENO) == -1) _exit(1);
+        if (dup2(pipefd[1], STDERR_FILENO) == -1) _exit(1);
+        close(pipefd[1]);
+        execvp(argv[0], argv);
+        _exit(1);
+    }
+
+    close(pipefd[1]);
     size_t total = 0;
     while (total < out_size - 1) {
-        size_t n = fread(output + total, 1, out_size - 1 - total, fp);
-        if (n == 0) break;
-        total += n;
+        ssize_t n = read(pipefd[0], output + total, out_size - 1 - total);
+        if (n <= 0) break;
+        total += (size_t)n;
     }
     output[total] = '\0';
+    close(pipefd[0]);
 
-    int status = pclose(fp);
+    int status;
+    waitpid(pid, &status, 0);
     return WIFEXITED(status) ? WEXITSTATUS(status) : -1;
 }
 
@@ -336,7 +356,9 @@ void export_results_json(ScenarioResult *results, int count, const char *filenam
 
     fprintf(f, "   ]\n");
     fprintf(f, "}\n");
-    fclose(f);
+    if (fclose(f) != 0) {
+        fprintf(stderr, "  Error: failed to write %s (disk full?)\n", filename);
+    }
     printf("  JSON: %s\n", filename);
 }
 
@@ -362,7 +384,9 @@ void export_results_csv(ScenarioResult *results, int count, const char *filename
         fprintf(f, "\n");
     }
 
-    fclose(f);
+    if (fclose(f) != 0) {
+        fprintf(stderr, "  Error: failed to write %s (disk full?)\n", filename);
+    }
     printf("  CSV:  %s\n", filename);
 }
 
