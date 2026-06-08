@@ -396,7 +396,7 @@ void print_banner(void)
     printf("\n");
     printf("        " CLR_YELLOW "+--------------------------------------------------------+" CLR_RESET "\n");
     printf("        " CLR_YELLOW "|                        K-Verify                        |" CLR_RESET "\n");
-    printf("        " CLR_YELLOW "|         Purple Team - Adversarial Validation         |" CLR_RESET "\n");
+    printf("        " CLR_YELLOW "|         Purple Team - Adversarial Validation           |" CLR_RESET "\n");
     printf("        " CLR_YELLOW "+--------------------------------------------------------+" CLR_RESET "\n");
     printf("\n");
     if (geteuid() != 0) {
