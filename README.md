@@ -260,7 +260,7 @@ K-Verify is designed for controlled adversarial testing:
 │   ├── ADVERSARIAL_SCENARIOS.md
 │   ├── PURPLE_MODEL.md
 │   └── VALIDATION_PROTOCOL.md
-├── Imagens/
+├── Images/
 │   ├── kverify1.png
 │   ├── kverify2.png
 │   └── kverify3.png
