@@ -19,7 +19,7 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	@mkdir -p $(REPORT_DIR)
 	@$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
-	@echo "Build successful."
+	@echo "🧹 Build successful. 🟢"
 
 $(OBJ_DIR)/%.o: src/%.c
 	@mkdir -p $(dir $@)
@@ -33,9 +33,10 @@ test: $(TEST_OBJS) $(TEST_RUNNER)
 	@$(CC) $(TEST_OBJS) $(TEST_RUNNER) -o $(TEST_TARGET) $(LDFLAGS)
 	@echo "Running test suite..."
 	@./$(TEST_TARGET)
-	@echo "Tests complete."
+	@echo "🧹 Tests complete. 🟢"
 
 clean:
+	@echo "🧹 Clean."
 	@rm -rf build/
 	@rm -f $(TARGET)
 	@rm -f $(TEST_TARGET)
