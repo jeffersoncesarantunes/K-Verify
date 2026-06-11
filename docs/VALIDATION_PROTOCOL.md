@@ -2,40 +2,19 @@
 
 ## Purpose
 
-The validation protocol defines how K-Verify cross-references adversarial actions against the detection capabilities of each Blue Team tool in the SYNTROPY ecosystem.
+The validation protocol defines how K-Verify cross-references adversarial actions against each Blue Team tool in the SYNTROPY ecosystem and works out whether the detection layer actually catches them.
 
 ## Detection Matrix Logic
 
 ### K-Scanner Detection
 
-K-Scanner detects RWX memory regions by parsing `/proc/[PID]/maps` and flagging any line whose permission field contains `rwx`.
+K-Scanner detects RWX memory regions by walking `/proc/[PID]/maps` and flagging any line where the permission field contains `rwx`. K-Verify validates this the same way: after executing an RWX allocation, it re-reads `/proc/self/maps`, counts every mapping with `rwx` permissions, and distinguishes between anonymous RWX (`[anonymous]`) and file-backed RWX. If any RWX mapping is present, K-Scanner *would* flag it and the result comes back as `DETECT`.
 
-K-Verify validates this by:
-
-1. After executing an RWX allocation, re-reading `/proc/self/maps`
-2. Counting all mappings with `rwx` permissions
-3. Distinguishing between anonymous RWX (`[anonymous]`) and file-backed RWX
-
-If any RWX mapping is present, K-Scanner *would* flag it — result: `DETECT`.
-
-**False Positive Consideration:** JIT engines (Python, Node.js, Firefox) legitimately create RWX regions. K-Verify's own allocations are anonymous and non-JIT, so they represent the *suspicious* class K-Scanner is designed to catch.
+There's a false positive angle worth calling out. JIT engines from Python, Node.js, and Firefox legitimately create RWX regions. K-Verify's allocations are anonymous and non-JIT, which puts them in the *suspicious* category K-Scanner is specifically designed to catch.
 
 ### LinSpec Detection
 
-LinSpec audits kernel hardening parameters by reading:
-
-- `/proc/sys/kernel/kptr_restrict`
-- `/proc/sys/kernel/dmesg_restrict`
-- `/proc/sys/kernel/kexec_load_disabled`
-- `/proc/sys/kernel/randomize_va_space`
-
-K-Verify validates this by:
-
-1. Reading the same `/proc/sys/` paths
-2. Comparing values against the LinSpec hardened baseline
-3. Counting parameters that are in a vulnerable state (value = 0)
-
-If 1+ parameter is non-hardened, LinSpec *would* flag it — result: `DETECT`.
+LinSpec audits kernel hardening parameters by reading a handful of `/proc/sys/` paths -- `kptr_restrict`, `dmesg_restrict`, `kexec_load_disabled`, and `randomize_va_space`. K-Verify reads the same files, compares the values against LinSpec's hardened baseline, and counts how many parameters are sitting in a vulnerable state (value = 0). If at least one parameter is non-hardened, LinSpec *would* flag it and the result is `DETECT`.
 
 ## Report Interpretation
 
@@ -47,10 +26,7 @@ SCENARIO             | EXEC      | K-Scanner | LinSpec | Notes
 RWX_ALLOC            | PASS      | DETECT    | MISS    | RWX region at 0x7f...
 ```
 
-**Purple Team Analysis:**
-- RWX_ALLOC execution succeeded (PASS) — the kernel allowed RWX memory
-- K-Scanner catches it (DETECT) — defense is working
-- Improvement: Red team cannot hide RWX allocations from K-Scanner
+On the Purple Team side, RWX_ALLOC execution succeeded (PASS) which means the kernel allowed RWX memory. K-Scanner catches it (DETECT), so that defense is working. The takeaway is that a red team can't hide RWX allocations from K-Scanner here.
 
 ### JSON Output
 
@@ -68,7 +44,7 @@ RWX_ALLOC            | PASS      | DETECT    | MISS    | RWX region at 0x7f...
 ## Scenario-Specific Validation Rules
 
 | Scenario | K-Scanner | LinSpec |
-|---|---|---|---|
+|---|---|---|
 | RWX_ALLOC | /proc/self/maps rwx count | Not checked |
 | RWX_EXEC | /proc/self/maps rwx count | Not checked |
 | HIDE_PROC | /proc/child/comm match | Not checked |
@@ -80,6 +56,4 @@ RWX_ALLOC            | PASS      | DETECT    | MISS    | RWX region at 0x7f...
 
 ## Limitations
 
-- **Synthetic Detection:** K-Verify detects what K-Scanner *would* detect, not what K-Scanner actually detects. True validation requires running K-Scanner in parallel. The `--live` flag partially addresses this by optionally invoking real K-Scanner and LinSpec binaries when available in $PATH.
-- **Single-Host Scope:** No network-based attack or detection validation.
-- **No Persistence:** All adversarial actions are ephemeral — no persistence mechanism is tested.
+This is synthetic detection -- K-Verify detects what K-Scanner *would* detect, not what K-Scanner actually detects at runtime. True validation means running K-Scanner in parallel. The `--live` flag partially addresses this by optionally invoking real K-Scanner and LinSpec binaries when they're in $PATH. Everything runs on a single host, so there's no network-based attack or detection validation. All adversarial actions are ephemeral, meaning no persistence mechanism gets tested.

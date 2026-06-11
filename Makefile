@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Iinclude -O2 -std=c99 -D_DEFAULT_SOURCE -D_GNU_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong
-LDFLAGS =
+CFLAGS = -Wall -Wextra -Iinclude -O2 -std=c99 -D_DEFAULT_SOURCE -D_GNU_SOURCE -D_FORTIFY_SOURCE=2 -fstack-protector-strong -fPIE
+LDFLAGS = -Wl,-z,relro,-z,now -pie
 TARGET = kverify
 TEST_TARGET = test_kverify
 OBJ_DIR = build/obj
@@ -12,14 +12,13 @@ TEST_SRCS = $(filter-out src/main.c, $(SRCS))
 TEST_OBJS = $(TEST_SRCS:src/%.c=$(OBJ_DIR)/%.o)
 TEST_RUNNER = $(OBJ_DIR)/tests/test_utils.o
 
-.PHONY: all clean purge test
-
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
 	@mkdir -p $(REPORT_DIR)
 	@$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
-	@echo "🟢 Build successful."
+	@strip $(TARGET)
+	@echo "OK Build successful."
 
 $(OBJ_DIR)/%.o: src/%.c
 	@mkdir -p $(dir $@)
@@ -33,10 +32,10 @@ test: $(TEST_OBJS) $(TEST_RUNNER)
 	@$(CC) $(TEST_OBJS) $(TEST_RUNNER) -o $(TEST_TARGET) $(LDFLAGS)
 	@echo "Running test suite..."
 	@./$(TEST_TARGET)
-	@echo "🟢 Tests complete."
+	@echo "OK Tests complete."
 
 clean:
-	@echo "🧹 Clean."
+	@echo "Clean."
 	@rm -rf build/
 	@rm -f $(TARGET)
 	@rm -f $(TEST_TARGET)

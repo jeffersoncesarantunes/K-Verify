@@ -2,22 +2,18 @@
 
 ## Definition
 
-K-Verify operates under a **Purple Team** framework, which integrates adversarial simulation (Red) with defensive detection validation (Blue) within a single tool.
-
-The core principle: **every attack tests a specific defense**, and every result produces a **detection gap analysis**.
+K-Verify works within a **Purple Team** framework, which means it blends adversarial simulation (Red) with defensive detection validation (Blue) into a single tool. The core idea is simple: every attack tests a specific defense, and every result feeds into a detection gap analysis.
 
 ## Methodology
 
 ### Three-Phase Execution
 
-1. **Adversarial Phase:** Execute a controlled attack technique (RWX allocation, process masquerading, mitigation bypass)
-2. **Detection Phase:** Query the same kernel interfaces that K-Scanner and LinSpec use
-3. **Validation Phase:** Compare adversarial success against detection coverage
+The tool runs through three phases. First is the **Adversarial Phase**, where it executes a controlled attack technique -- something like an RWX allocation, process masquerading, or mitigation bypass. Next is the **Detection Phase**, where it queries the same kernel interfaces K-Scanner and LinSpec would read. Finally, the **Validation Phase** compares whether the adversarial action succeeded against whether the defense caught it.
 
 ### Attack-Defense Mapping
 
 | Adversarial Action | Blue Tool | Detection Mechanism |
-|---|---|---|---|
+|---|---|---|
 | RWX mmap | K-Scanner | /proc/[PID]/maps permission parsing |
 | Shellcode execution | K-Scanner | RWX + writable + executable region detection |
 | Process masquerading | K-Scanner | /proc/[PID]/comm and cmdline validation |
@@ -28,12 +24,7 @@ The core principle: **every attack tests a specific defense**, and every result 
 
 ## Classification
 
-Results are classified across two axes:
-
-- **Execution Result:** Did the adversarial action succeed? (PASS / FAIL / WARN / SKIP / ERROR)
-- **Detection Result:** Did the defensive tool detect it? (DETECT / MISS)
-
-The combination produces four Purple Team outcomes:
+Results get classified across two axes. The **Execution Result** tells you whether the adversarial action succeeded -- PASS, FAIL, WARN, SKIP, or ERROR. The **Detection Result** tells you whether the defensive tool caught it -- DETECT or MISS. Combining them gives four Purple Team outcomes:
 
 | Execution | Detection | Interpretation |
 |---|---|---|
@@ -44,8 +35,4 @@ The combination produces four Purple Team outcomes:
 
 ## Operational Integrity
 
-- All adversarial actions are **contained** to the local process or immediate children
-- No persistent system modifications
-- No network exfiltration or lateral movement
-- Shellcode is limited to exit(0) — benign, verifiable, and trivially inspected
-- Child processes are tracked and can be reaped via `--cleanup`
+Every adversarial action is contained to the local process or its immediate children. There are no persistent system modifications, no network exfiltration, no lateral movement. Shellcode is limited to exit(0) -- it's benign, verifiable, and trivially inspectable. Child processes are tracked and can be cleaned up via `--cleanup`.

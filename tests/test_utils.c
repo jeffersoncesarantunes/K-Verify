@@ -12,10 +12,10 @@ static void test_assert(const char *name, int condition)
     tests_run++;
     if (condition) {
         tests_passed++;
-        printf("  " CLR_GREEN "\xe2\x9c\x93" CLR_RESET " %s\n", name);
+        printf("  " CLR_GREEN "PASS" CLR_RESET " %s\n", name);
     } else {
         tests_failed++;
-        printf("  " CLR_RED "\xe2\x9c\x98" CLR_RESET " %s\n", name);
+        printf("  " CLR_RED "FAIL" CLR_RESET " %s\n", name);
     }
 }
 
