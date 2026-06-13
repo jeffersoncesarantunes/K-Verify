@@ -178,6 +178,12 @@ cat kverify-report.json | head -n 15
 
 ---
 
+## Project in Action
+
+Screenshots are reserved for a future visual walkthrough. The images directory contains assets that will be referenced here once the walkthrough is finalized.
+
+---
+
 ## Operational Integrity
 
 K-Verify is designed for controlled adversarial testing. All shellcode is benign -- exit(0) only. Child processes are tracked and reaped. The `--cleanup` mode kills any remaining children. `--verify-only` does a read-only assessment. There are no persistent system modifications, no network activity, and no lateral movement. Every action is logged transparently.
@@ -207,6 +213,8 @@ You'll need a Linux kernel 5.x or newer, gcc, make, and root privileges for /pro
 │   ├── kverify1.png
 │   ├── kverify2.png
 │   └── kverify3.png
+
+> **Note:** Images are reserved for a future "Project in Action" section.
 ├── include/
 │   ├── colors.h
 │   ├── kverify.h

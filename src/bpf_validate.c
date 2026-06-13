@@ -14,8 +14,10 @@ TestResult bpf_validate(ScenarioResult *result)
     }
 
     if (read_proc_line(PROC_BPF_JIT_HARDEN, buf, sizeof(buf)) == 0) {
-        bpf_jit_harden = atoi(buf);
-        if (bpf_jit_harden >= 0) {
+        char *end;
+        long val = strtol(buf, &end, 10);
+        if (buf[0] != '\0' && (*end == '\n' || *end == '\0')) {
+            bpf_jit_harden = (int)val;
             bpf_capable++;
         }
     }

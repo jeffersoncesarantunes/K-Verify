@@ -68,6 +68,7 @@ int run_command(char *const argv[], char *output, size_t out_size)
         if (dup2(pipefd[1], STDOUT_FILENO) == -1) _exit(1);
         if (dup2(pipefd[1], STDERR_FILENO) == -1) _exit(1);
         close(pipefd[1]);
+        if (argv[0] == NULL) _exit(1);
         execvp(argv[0], argv);
         _exit(1);
     }

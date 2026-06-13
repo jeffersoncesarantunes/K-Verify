@@ -1,6 +1,25 @@
 #include "../include/kverify.h"
 #include "../include/modules.h"
 
+static pid_t tracked_children[256];
+static int tracked_count = 0;
+
+static void track_child(pid_t pid) {
+    if (tracked_count < 256) tracked_children[tracked_count++] = pid;
+}
+
+void cleanup_tracked_children(void) {
+    for (int i = 0; i < tracked_count; i++) {
+        if (tracked_children[i] > 0) {
+            kill(tracked_children[i], SIGTERM);
+            usleep(50000);
+            kill(tracked_children[i], SIGKILL);
+            waitpid(tracked_children[i], NULL, WNOHANG);
+        }
+    }
+    tracked_count = 0;
+}
+
 pid_t hide_fork_masquerade(const char *new_name, ScenarioResult *result)
 {
     if (!new_name) new_name = "[kworker]";
@@ -51,6 +70,8 @@ pid_t hide_fork_masquerade(const char *new_name, ScenarioResult *result)
         snprintf(result->detection.notes, sizeof(result->detection.notes),
                  "Could not read /proc/%d/comm", child);
     }
+
+    if (child > 0) track_child(child);
 
     result->detection.kscanner_detected = result->execution_result == RESULT_PASS;
     return child;
@@ -134,6 +155,8 @@ pid_t hide_suspended_child(ScenarioResult *result)
         snprintf(result->detection.notes, sizeof(result->detection.notes),
                  "Child %d not found in /proc (hidden?)", child);
     }
+
+    if (child > 0) track_child(child);
 
     result->detection.kscanner_detected = 1;
     return child;

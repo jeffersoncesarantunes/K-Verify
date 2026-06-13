@@ -67,7 +67,9 @@ int verify_linspec_hardening(ScenarioResult *result)
 
     for (size_t i = 0; i < sizeof(checks) / sizeof(checks[0]); i++) {
         if (read_proc_line(checks[i].path, buf, sizeof(buf)) == 0) {
-            int val = atoi(buf);
+            char *end;
+            long val = strtol(buf, &end, 10);
+            if (buf[0] == '\0' || *end != '\n') continue;
             if (val == 0) {
                 vulnerabilities++;
             }

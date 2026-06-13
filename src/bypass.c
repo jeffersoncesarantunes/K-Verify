@@ -7,7 +7,9 @@ TestResult bypass_wx_check(ScenarioResult *result)
     int wx_enforced = 0;
 
     if (read_proc_line(PROC_EXEC_SHIELD, buf, sizeof(buf)) == 0) {
-        if (atoi(buf) > 0) wx_enforced = 1;
+        char *end;
+        long val = strtol(buf, &end, 10);
+        if (buf[0] != '\0' && (*end == '\n' || *end == '\0') && val > 0) wx_enforced = 1;
     }
 
     if (read_proc_line(PROC_MMAP_MIN_ADDR, buf, sizeof(buf)) == 0) {
@@ -49,7 +51,14 @@ TestResult bypass_aslr_assess(ScenarioResult *result)
     char buf[MAX_LINE_LEN];
 
     if (read_proc_line(PROC_ASLR, buf, sizeof(buf)) == 0) {
-        int val = atoi(buf);
+        char *end;
+        long val = strtol(buf, &end, 10);
+        if (buf[0] == '\0' || (*end != '\n' && *end != '\0')) {
+            result->execution_result = RESULT_SKIP;
+            snprintf(result->detection.notes, sizeof(result->detection.notes),
+                     "Could not parse ASLR state");
+            return RESULT_SKIP;
+        }
         switch (val) {
             case 0:
                 result->execution_result = RESULT_PASS;
