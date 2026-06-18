@@ -2,6 +2,7 @@
 
 Purple Team adversarial validation suite for the SYNTROPY forensic ecosystem.
 
+
 [![Platform-Linux](https://img.shields.io/badge/Platform-Linux-1793D1?style=flat-square&logo=linux&logoColor=white)](https://kernel.org)
 [![Language-C99](https://img.shields.io/badge/Language-C99-A8B9CC?style=flat-square&logo=c&logoColor=white)](https://gcc.gnu.org/)
 [![License-MIT](https://img.shields.io/badge/License-MIT-EE0000?style=flat-square&logo=license&logoColor=white)](LICENSE)
@@ -10,11 +11,13 @@ Purple Team adversarial validation suite for the SYNTROPY forensic ecosystem.
 [![Tested-on](https://img.shields.io/badge/Tested%20on-Arch%20Linux-1793D1?style=flat-square&logo=arch-linux)](https://security.archlinux.org/)
 [![Domain](https://img.shields.io/badge/Domain-Purple%20Team%20%7C%20Adversarial%20Validation-8A2BE2?style=flat-square)](#-overview)
 
+
 ---
 
 ## Etymology & Origin
 
 The name **K-Verify** comes from the Linux **Kernel** — it's the foundational interface that backs every piece of validation logic here. The "K" is a nod to the Kernel, same as **K-Scanner**, its sister project in the SYNTROPY ecosystem. The difference is what each one does. A scanner enumerates state. K-Verify *verifies*: it actively runs adversarial behavior on a live system and checks whether detection mechanisms actually catch it.
+
 
 ---
 
@@ -26,11 +29,13 @@ It runs controlled adversarial actions on a live Linux box, then cross-reference
 
 The tool covers a handful of core areas. It allocates writable-plus-executable memory and checks whether K-Scanner picks it up. It forks and renames processes to see how /proc enumeration holds up. It tries W^X and ASLR bypasses and validates LinSpec's auditing. It checks kernel BTF and BPF JIT state for eBPF readiness, and validates YARA pattern matching against shellcode signatures. When live binaries are available, it can actually invoke real K-Scanner and LinSpec instances for true end-to-end testing. Every scenario is tagged with its MITRE ATT&CK technique ID, and the detection gap analysis counts how many scenarios neither tool covers.
 
+
 ---
 
 ## Features
 
 K-Verify comes with eight adversarial scenarios, each mapped to a MITRE ATT&CK technique ID. You get eBPF telemetry validation via `--bpf` that checks kernel BTF and BPF JIT readiness, a YARA rule detection test with `--yara` that runs known shellcode patterns through the engine, and live tool integration with `--live` that invokes actual K-Scanner and LinSpec binaries when they're in $PATH. The automated verification cross-references everything against the same kernel interfaces both tools use internally. Output goes to a color-coded Purple Team validation matrix on the terminal, and you can also export structured JSON or CSV for your reporting pipeline. The **Detection Gap Analysis** call out blind spots where no tool provides coverage. **MITRE ATT&CK** IDs show up in terminal output, JSON, and CSV. There's a **Silent JSON mode** (`--json`) that suppresses the banner entirely for CI/CD pipelines. The engine is modular C99 — each scenario lives in its own source file. There's an automated unit test suite via `make test`, a CI/CD pipeline through GitHub Actions, a read-only verification phase that assesses system state without running any attacks, and full child process lifecycle management with a cleanup mode.
+
 
 ---
 
@@ -50,6 +55,7 @@ Every scenario is mapped to a real MITRE ATT&CK technique:
 | YARA_SCAN | [T1560](https://attack.mitre.org/techniques/T1560/) | Archive Collected Data |
 
 Technique IDs are embedded in terminal output, JSON exports, and CSV reports.
+
 
 ---
 
@@ -88,6 +94,7 @@ Technique IDs are embedded in terminal output, JSON exports, and CSV reports.
   ══════════════════════════════════════════════════════════════════════════
 ```
 
+
 ---
 
 ## How It Works
@@ -109,6 +116,7 @@ Results come out as a validation matrix. You get to see whether the adversarial 
 ### Detection Gap Analysis
 
 The final assessment includes a metric called **unmonitored gaps** -- scenarios where neither K-Scanner nor LinSpec provides coverage. Those are your highest-risk blind spots.
+
 
 ---
 
@@ -162,6 +170,7 @@ sudo pacman -S yara
 
 When `--json` is used alone, the tool skips the banner and terminal output entirely and writes only the JSON report file. This is meant for automated pipelines, cron jobs, and CI/CD integration.
 
+
 ---
 
 ## Post-Analysis & Report Viewing
@@ -176,17 +185,20 @@ column -t -s ',' kverify-report.csv | head -n 16
 cat kverify-report.json | head -n 15
 ```
 
+
 ---
 
 ## Project in Action
 
 Screenshots are reserved for a future visual walkthrough. The images directory contains assets that will be referenced here once the walkthrough is finalized.
 
+
 ---
 
 ## Operational Integrity
 
 K-Verify is designed for controlled adversarial testing. All shellcode is benign -- exit(0) only. Child processes are tracked and reaped. The `--cleanup` mode kills any remaining children. `--verify-only` does a read-only assessment. There are no persistent system modifications, no network activity, and no lateral movement. Every action is logged transparently.
+
 
 ---
 
@@ -196,47 +208,60 @@ K-Verify is designed for controlled adversarial testing. All shellcode is benign
 
 You'll need a Linux kernel 5.x or newer, gcc, make, and root privileges for /proc access and mmap tests. A UTF-8 compatible terminal helps. Optionally you'll want yara plus yarac for `--yara`, and kscanner plus linspec for `--live`.
 
+
 ---
 
 ## Repository Structure
 
 ```text
 ├── .github/workflows/
-│   └── ci.yml                     CI/CD pipeline
+│   └── ci.yml                             CI/CD pipeline
+
 ├── build/
-│   └── obj/
+│   └── obj/                               Object files
+
 ├── docs/
-│   ├── ADVERSARIAL_SCENARIOS.md
-│   ├── PURPLE_MODEL.md
-│   └── VALIDATION_PROTOCOL.md
+│   ├── ADVERSARIAL_SCENARIOS.md           Adversarial scenarios reference
+│   ├── PURPLE_MODEL.md                    Purple team model
+│   └── VALIDATION_PROTOCOL.md             Validation protocol
+
 ├── Images/
 │   ├── kverify1.png
 │   ├── kverify2.png
 │   └── kverify3.png
+│
+│   > **Note:** Images reserved for future "Project in Action" section.
 
-> **Note:** Images are reserved for a future "Project in Action" section.
 ├── include/
-│   ├── colors.h
-│   ├── kverify.h
-│   └── modules.h
-├── reports/
+│   ├── colors.h                           Terminal color definitions
+│   ├── kverify.h                          Main header
+│   └── modules.h                          Module declarations
+
+├── reports/                               Output reports directory
+
 ├── src/
-│   ├── bpf_validate.c
-│   ├── bypass.c
-│   ├── hide.c
-│   ├── main.c
-│   ├── rwx.c
-│   ├── utils.c
-│   ├── verify.c
-│   └── yara_scan.c
+│   ├── bpf_validate.c                     BPF validation module
+│   ├── bypass.c                           W^X / ASLR bypass module
+│   ├── hide.c                             Process hiding module
+│   ├── main.c                             CLI entry point
+│   ├── rwx.c                              RWX allocation module
+│   ├── utils.c                            Shared utilities
+│   ├── verify.c                           Verification engine
+│   └── yara_scan.c                        YARA scanning module
+
 ├── tests/
 │   ├── .gitkeep
-│   └── test_utils.c
+│   └── test_utils.c                       Unit tests
+
 ├── .gitignore
+
 ├── LICENSE
+
 ├── Makefile
+
 └── README.md
 ```
+
 
 ---
 
@@ -244,9 +269,11 @@ You'll need a Linux kernel 5.x or newer, gcc, make, and root privileges for /pro
 
 The language is C99. Data sources are `/proc`, `mmap`, and `prctl`. The build tool is GNU Make. The test framework is a custom C test harness. Target platforms are Linux Kernel 5.x and 6.x.
 
+
 ---
 
 ## Roadmap
+
 
 - [x] Modular C99 engine with RWX, hide, and bypass modules
 - [x] Verification engine cross-referencing K-Scanner and LinSpec
@@ -262,6 +289,7 @@ The language is C99. Data sources are `/proc`, `mmap`, and `prctl`. The build to
 - [x] CI/CD pipeline (GitHub Actions)
 - [ ] Multi-process coordinated attack scenarios
 
+
 ---
 
 ## Documentation
@@ -269,6 +297,7 @@ The language is C99. Data sources are `/proc`, `mmap`, and `prctl`. The build to
 [![Docs-Purple](https://img.shields.io/badge/Purple-Model-8A2BE2?style=flat-square\&logo=target\&logoColor=white)](./docs/PURPLE_MODEL.md)
 [![Docs-Scenarios](https://img.shields.io/badge/Adversarial-Scenarios-CC0000?style=flat-square\&logo=linux\&logoColor=white)](./docs/ADVERSARIAL_SCENARIOS.md)
 [![Docs-Validation](https://img.shields.io/badge/Validation-Protocol-00599C?style=flat-square\&logo=gitbook\&logoColor=white)](./docs/VALIDATION_PROTOCOL.md)
+
 
 ---
 
