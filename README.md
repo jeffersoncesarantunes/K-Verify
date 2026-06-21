@@ -226,18 +226,18 @@ You'll need a Linux kernel 5.x or newer, gcc, make, and root privileges for /pro
 │   └── VALIDATION_PROTOCOL.md             Validation protocol
 
 ├── Images/
-│   ├── kverify1.png
-│   ├── kverify2.png
-│   └── kverify3.png
-│
-│   > **Note:** Images reserved for future "Project in Action" section.
+│   ├── kverify1.png                       Screenshot placeholder
+│   ├── kverify2.png                       Screenshot placeholder
+│   └── kverify3.png                       Screenshot placeholder
 
 ├── include/
 │   ├── colors.h                           Terminal color definitions
-│   ├── kverify.h                          Main header
+│   ├── kverify.h                          Main header and definitions
 │   └── modules.h                          Module declarations
 
 ├── reports/                               Output reports directory
+
+├── scenarios/                             Adversarial scenario definitions
 
 ├── src/
 │   ├── bpf_validate.c                     BPF validation module
