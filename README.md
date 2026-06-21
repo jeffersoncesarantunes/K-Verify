@@ -214,52 +214,52 @@ You'll need a Linux kernel 5.x or newer, gcc, make, and root privileges for /pro
 ## Repository Structure
 
 ```text
-+-- .github/workflows/
-|   \-- ci.yml                             CI/CD pipeline
+├── .github/workflows/
+│   └── ci.yml
 
-+-- build/
-|   \-- obj/                               Object files
+├── build/
+│   └── obj/
 
-+-- docs/
-|   +-- ADVERSARIAL_SCENARIOS.md           Adversarial scenarios reference
-|   +-- PURPLE_MODEL.md                    Purple team model
-|   \-- VALIDATION_PROTOCOL.md             Validation protocol
+├── docs/
+│   ├── ADVERSARIAL_SCENARIOS.md
+│   ├── PURPLE_MODEL.md
+│   └── VALIDATION_PROTOCOL.md
 
-+-- Images/
-|   +-- kverify1.png                       Screenshot placeholder
-|   +-- kverify2.png                       Screenshot placeholder
-|   \-- kverify3.png                       Screenshot placeholder
+├── Images/
+│   ├── kverify1.png
+│   ├── kverify2.png
+│   └── kverify3.png
 
-+-- include/
-|   +-- colors.h                           Terminal color definitions
-|   +-- kverify.h                          Main header and definitions
-|   \-- modules.h                          Module declarations
+├── include/
+│   ├── colors.h
+│   ├── kverify.h
+│   └── modules.h
 
-+-- reports/                               Output reports directory
+├── reports/
 
-+-- scenarios/                             Adversarial scenario definitions
+├── scenarios/
 
-+-- src/
-|   +-- bpf_validate.c                     BPF validation module
-|   +-- bypass.c                           W^X / ASLR bypass module
-|   +-- hide.c                             Process hiding module
-|   +-- main.c                             CLI entry point
-|   +-- rwx.c                              RWX allocation module
-|   +-- utils.c                            Shared utilities
-|   +-- verify.c                           Verification engine
-|   \-- yara_scan.c                        YARA scanning module
+├── src/
+│   ├── bpf_validate.c
+│   ├── bypass.c
+│   ├── hide.c
+│   ├── main.c
+│   ├── rwx.c
+│   ├── utils.c
+│   ├── verify.c
+│   └── yara_scan.c
 
-+-- tests/
-|   +-- .gitkeep
-|   \-- test_utils.c                       Unit tests
+├── tests/
+│   ├── .gitkeep
+│   └── test_utils.c
 
-+-- .gitignore
+├── .gitignore
 
-+-- LICENSE
+├── LICENSE
 
-+-- Makefile
+├── Makefile
 
-\-- README.md
+└── README.md
 ```
 
 
