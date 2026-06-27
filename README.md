@@ -7,7 +7,9 @@ Purple Team adversarial validation suite for the SYNTROPY forensic ecosystem.
 [![Language-C99](https://img.shields.io/badge/Language-C99-00599C?style=flat-square&logo=c&logoColor=white)](https://gcc.gnu.org/)
 [![License-MIT](https://img.shields.io/badge/License-MIT-EE0000?style=flat-square&logo=license&logoColor=white)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Active-006400?style=flat-square)](#-roadmap)
-[![CI](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?style=flat-square&logo=githubactions)](.github/workflows/ci.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/jeffersoncesarantunes/K-Verify/ci.yml?style=flat-square&logo=githubactions&label=CI)](https://github.com/jeffersoncesarantunes/K-Verify/actions/workflows/ci.yml)
+[![CodeQL](https://img.shields.io/github/actions/workflow/status/jeffersoncesarantunes/K-Verify/codeql.yml?style=flat-square&logo=githubactions&label=CodeQL)](https://github.com/jeffersoncesarantunes/K-Verify/actions/workflows/codeql.yml)
+[![Docker](https://img.shields.io/badge/Docker-Multi--stage-2496ED?style=flat-square&logo=docker)](Dockerfile)
 [![Tested-on](https://img.shields.io/badge/Tested%20on-Arch%20Linux-1793D1?style=flat-square&logo=arch-linux)](https://security.archlinux.org/)
 [![Domain](https://img.shields.io/badge/Domain-Purple%20Team%20%7C%20Adversarial%20Validation-8A2BE2?style=flat-square)](#-overview)
 

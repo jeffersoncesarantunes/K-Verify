@@ -1,0 +1,52 @@
+.TH KVERIFY 1 "2026-06-27" "K-Verify" "User Commands"
+.SH NAME
+kverify \- Purple Team adversarial validation suite
+.SH SYNOPSIS
+.B kverify
+[\fI--scenario\fR \fIn\fR]
+[\fI--list\fR]
+[\fI--help\fR]
+.SH DESCRIPTION
+K-Verify simulates 8 adversarial scenarios mapped to MITRE
+ATT\&CK techniques and cross-validates detection by K-Scanner
+and LinSpec. It performs synthetic RWX allocations, process
+hiding, W^X bypass, ASLR checks, BPF validation, and YARA scans
+to verify that the forensic ecosystem detects each technique.
+.SH OPTIONS
+.TP
+.B \--scenario \fIn\fR
+Execute a single scenario (1-8).
+.IP
+1: RWX memory allocation (T1055)
+.IP
+2: Process masquerading (T1055.001)
+.IP
+3: W^X bypass via mprotect (T1055.001)
+.IP
+4: ASLR strength check
+.IP
+5: BPF filter presence check
+.IP
+6: YARA scan validation
+.IP
+7: K-Scanner cross-check
+.IP
+8: LinSpec cross-check
+.TP
+.B \--list
+List all available scenarios with descriptions.
+.TP
+.B \--help
+Display this help message and exit.
+.SH EXIT STATUS
+.B 0
+on success, 1 on error or detection failure.
+.SH BUGS
+Some scenarios execute privileged operations (ptrace, prctl)
+and must be run as root.
+.SH AUTHOR
+Jefferson Cesar Antunes
+.SH SEE ALSO
+.BR kscanner (1),
+.BR linspec (1),
+.BR syscage (1)

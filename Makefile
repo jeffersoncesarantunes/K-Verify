@@ -5,6 +5,9 @@ TARGET = kverify
 TEST_TARGET = test_kverify
 OBJ_DIR = build/obj
 REPORT_DIR = reports
+PREFIX ?= /usr/local
+BINDIR  = $(PREFIX)/bin
+MANDIR  = $(PREFIX)/share/man/man1
 
 SRCS = $(shell find src -name "*.c")
 OBJS = $(SRCS:src/%.c=$(OBJ_DIR)/%.o)
@@ -33,6 +36,22 @@ test: $(TEST_OBJS) $(TEST_RUNNER)
 	@echo "Running test suite..."
 	@./$(TEST_TARGET)
 	@echo "OK Tests complete."
+
+install: $(TARGET) install-man
+	@install -m 755 -d $(BINDIR)
+	@install -m 755 $(TARGET) $(BINDIR)/$(TARGET)
+	@echo "  Installed $(TARGET) to $(BINDIR)"
+
+install-man:
+	@install -m 755 -d $(MANDIR)
+	@install -m 644 man/kverify.1 $(MANDIR)/kverify.1
+	@echo "  Installed man page to $(MANDIR)"
+
+uninstall:
+	@rm -f $(BINDIR)/$(TARGET)
+	@rm -f $(MANDIR)/kverify.1
+	@-rmdir $(MANDIR) 2>/dev/null; true
+	@echo "  Removed $(TARGET)"
 
 clean:
 	@echo "Clean."
