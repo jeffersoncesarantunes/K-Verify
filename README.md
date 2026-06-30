@@ -301,10 +301,3 @@ The language is C99. Data sources are `/proc`, `mmap`, and `prctl`. The build to
 [![Docs-Validation](https://img.shields.io/badge/Validation-Protocol-00599C?style=flat-square\&logo=gitbook\&logoColor=white)](./docs/VALIDATION_PROTOCOL.md)
 
 
----
-
-## License
-
-[![License-MIT](https://img.shields.io/badge/License-MIT-EE0000?style=flat-square\&logo=opensourceinitiative\&logoColor=white)](./LICENSE)
-
-*This project is licensed under the MIT License.*
