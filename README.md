@@ -218,27 +218,21 @@ You'll need a Linux kernel 5.x or newer, gcc, make, and root privileges for /pro
 ```text
 ├── .github/workflows/
 │   └── ci.yml
-
 ├── build/
 │   └── obj/
-
 ├── docs/
 │   ├── ADVERSARIAL_SCENARIOS.md
 │   ├── PURPLE_MODEL.md
 │   └── VALIDATION_PROTOCOL.md
-
 ├── Images/
 │   ├── kverify1.png
 │   ├── kverify2.png
 │   └── kverify3.png
-
 ├── include/
 │   ├── colors.h
 │   ├── kverify.h
 │   └── modules.h
-
 ├── reports/
-
 ├── src/
 │   ├── bpf_validate.c
 │   ├── bypass.c
@@ -248,17 +242,12 @@ You'll need a Linux kernel 5.x or newer, gcc, make, and root privileges for /pro
 │   ├── utils.c
 │   ├── verify.c
 │   └── yara_scan.c
-
 ├── tests/
 │   ├── .gitkeep
 │   └── test_utils.c
-
 ├── .gitignore
-
 ├── LICENSE
-
 ├── Makefile
-
 └── README.md
 ```
 
