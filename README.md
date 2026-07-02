@@ -87,10 +87,10 @@ Technique IDs are embedded in terminal output, JSON exports, and CSV reports.
     FINAL ASSESSMENT
   ══════════════════════════════════════════════════════════════════════════
 
-  [██████░░░░]  4/8  (50%)  adversarial actions succeeded
+  [█████░░░░░]  4/8  (50%)  adversarial actions succeeded
   [██░░░░░░░░]  2/8  (25%)  detected by K-Scanner
   [█░░░░░░░░░]  1/8  (12%)  detected by LinSpec
-  [██████░░░░]  4/8  (50%)  unmonitored gaps (no KS or LS coverage)
+  [█████░░░░░]  4/8  (50%)  unmonitored gaps (no KS or LS coverage)
 
    STATUS:  Purple Team Validation Complete
   ══════════════════════════════════════════════════════════════════════════
@@ -238,8 +238,6 @@ You'll need a Linux kernel 5.x or newer, gcc, make, and root privileges for /pro
 │   └── modules.h
 
 ├── reports/
-
-├── scenarios/
 
 ├── src/
 │   ├── bpf_validate.c

@@ -21,7 +21,6 @@ void *rwx_allocate(size_t size, ScenarioResult *result)
     snprintf(result->detection.notes, sizeof(result->detection.notes),
              "RWX region at %p (%zu bytes)", addr, size);
 
-    result->detection.kscanner_detected = 1;
     return addr;
 }
 
@@ -59,7 +58,6 @@ int rwx_execute(void *addr, size_t size, const unsigned char *shellcode,
 
     if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
         result->execution_result = RESULT_PASS;
-        result->detection.kscanner_detected = 1;
         snprintf(result->detection.notes, sizeof(result->detection.notes),
                  "Shellcode executed at %p (pid %d)", addr, child);
     } else {

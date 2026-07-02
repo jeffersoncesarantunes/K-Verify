@@ -13,6 +13,8 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <dirent.h>
+#include <sys/select.h>
+#include <sys/time.h>
 
 #include "colors.h"
 

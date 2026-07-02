@@ -1,4 +1,5 @@
 #include "../include/kverify.h"
+#include "../include/modules.h"
 
 const char *scenario_names[SCENARIO_COUNT] = {
     "RWX_ALLOC",
@@ -74,8 +75,18 @@ int run_command(char *const argv[], char *output, size_t out_size)
     }
 
     close(pipefd[1]);
+
     size_t total = 0;
+    struct timeval tv = { .tv_sec = 30, .tv_usec = 0 };
+
     while (total < out_size - 1) {
+        fd_set fds;
+        FD_ZERO(&fds);
+        FD_SET(pipefd[0], &fds);
+
+        int sel = select(pipefd[0] + 1, &fds, NULL, NULL, &tv);
+        if (sel <= 0) break;
+
         ssize_t n = read(pipefd[0], output + total, out_size - 1 - total);
         if (n <= 0) break;
         total += (size_t)n;
@@ -84,7 +95,12 @@ int run_command(char *const argv[], char *output, size_t out_size)
     close(pipefd[0]);
 
     int status;
-    waitpid(pid, &status, 0);
+    waitpid(pid, &status, WNOHANG);
+    if (!WIFEXITED(status)) {
+        kill(pid, SIGKILL);
+        waitpid(pid, &status, 0);
+    }
+
     return WIFEXITED(status) ? WEXITSTATUS(status) : -1;
 }
 
@@ -408,12 +424,7 @@ void print_banner(void)
 
 void cleanup_children(void)
 {
-    pid_t pgid = getpgid(0);
-    if (pgid > 0) {
-        kill(-pgid, SIGTERM);
-        usleep(100000);
-        kill(-pgid, SIGKILL);
-    }
+    cleanup_tracked_children();
     printf("  Children cleaned up.\n");
 }
 

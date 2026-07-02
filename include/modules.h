@@ -22,4 +22,6 @@ int verify_live_kscanner(ScenarioResult *result);
 int verify_live_linspec(ScenarioResult *result);
 int verify_full(ScenarioResult *results, int count);
 
+void cleanup_tracked_children(void);
+
 #endif
