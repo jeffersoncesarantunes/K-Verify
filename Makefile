@@ -21,7 +21,7 @@ $(TARGET): $(OBJS)
 	@mkdir -p $(REPORT_DIR)
 	@$(CC) $(OBJS) -o $(TARGET) $(LDFLAGS)
 	@strip $(TARGET)
-	@echo "OK Build successful."
+	@echo "✅ Build successful."
 
 $(OBJ_DIR)/%.o: src/%.c
 	@mkdir -p $(dir $@)
@@ -33,28 +33,28 @@ $(OBJ_DIR)/tests/%.o: tests/%.c
 
 test: $(TEST_OBJS) $(TEST_RUNNER)
 	@$(CC) $(TEST_OBJS) $(TEST_RUNNER) -o $(TEST_TARGET) $(LDFLAGS)
-	@echo "Running test suite..."
+	@echo "🧪 Running test suite..."
 	@./$(TEST_TARGET)
-	@echo "OK Tests complete."
+	@echo "✅ Tests complete."
 
 install: $(TARGET) install-man
 	@install -m 755 -d $(BINDIR)
 	@install -m 755 $(TARGET) $(BINDIR)/$(TARGET)
-	@echo "  Installed $(TARGET) to $(BINDIR)"
+	@echo "  📦 Installed $(TARGET) to $(BINDIR)"
 
 install-man:
 	@install -m 755 -d $(MANDIR)
 	@install -m 644 man/kverify.1 $(MANDIR)/kverify.1
-	@echo "  Installed man page to $(MANDIR)"
+	@echo "  📄 Installed man page to $(MANDIR)"
 
 uninstall:
 	@rm -f $(BINDIR)/$(TARGET)
 	@rm -f $(MANDIR)/kverify.1
 	@-rmdir $(MANDIR) 2>/dev/null; true
-	@echo "  Removed $(TARGET)"
+	@echo "  🗑 Removed $(TARGET)"
 
 clean:
-	@echo "Clean."
+	@echo "🧹 Clean."
 	@rm -rf build/
 	@rm -f $(TARGET)
 	@rm -f $(TEST_TARGET)
