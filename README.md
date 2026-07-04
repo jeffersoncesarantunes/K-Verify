@@ -131,6 +131,9 @@ git clone https://github.com/jeffersoncesarantunes/K-Verify.git
 cd K-Verify
 
 # Build the project
+make
+
+# (Optional) Clean rebuild from scratch
 make clean && make
 
 # Run the test suite

@@ -81,7 +81,7 @@ TestResult bypass_aslr_assess(ScenarioResult *result)
             default:
                 result->execution_result = RESULT_WARN;
                 snprintf(result->detection.notes, sizeof(result->detection.notes),
-                         "ASLR unknown state (randomize_va_space=%d)", val);
+                         "ASLR unknown state (randomize_va_space=%ld)", val);
                 return RESULT_WARN;
         }
     }

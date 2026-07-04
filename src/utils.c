@@ -94,9 +94,9 @@ int run_command(char *const argv[], char *output, size_t out_size)
     output[total] = '\0';
     close(pipefd[0]);
 
-    int status;
-    waitpid(pid, &status, WNOHANG);
-    if (!WIFEXITED(status)) {
+    int status = 0;
+    pid_t waited = waitpid(pid, &status, WNOHANG);
+    if (waited != pid || !WIFEXITED(status)) {
         kill(pid, SIGKILL);
         waitpid(pid, &status, 0);
     }
