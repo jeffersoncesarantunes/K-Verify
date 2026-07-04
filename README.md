@@ -255,6 +255,23 @@ You'll need a Linux kernel 5.x or newer, gcc, make, and root privileges for /pro
 
 ---
 
+## Project in Action
+
+![Terminal Matrix](./Images/kverify1.png)
+
+*Purple Team validation matrix with MITRE ATT&CK references.*
+
+![YARA Detection](./Images/kverify2.png)
+
+*YARA rule-based shellcode pattern detection output.*
+
+![Forensic Report](./Images/kverify3.png)
+
+*Detection Gap Analysis with cross-referenced blind spots.*
+
+
+---
+
 ## Tech Stack
 
 The language is C99. Data sources are `/proc`, `mmap`, and `prctl`. The build tool is GNU Make. The test framework is a custom C test harness. Target platforms are Linux Kernel 5.x and 6.x.
