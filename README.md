@@ -12,6 +12,7 @@ Purple Team adversarial validation suite for the SYNTROPY forensic ecosystem.
 [![Docker](https://img.shields.io/badge/Docker-Multi--stage-2496ED?style=flat-square&logo=docker)](Dockerfile)
 [![Tested-on](https://img.shields.io/badge/Tested%20on-Arch%20Linux-1793D1?style=flat-square&logo=arch-linux)](https://security.archlinux.org/)
 [![Domain](https://img.shields.io/badge/Domain-Purple%20Team%20%7C%20Adversarial%20Validation-8A2BE2?style=flat-square)](#-overview)
+[![YARA](https://img.shields.io/badge/YARA-Rule%20Matching-FF6F00?style=flat-square)](https://virustotal.github.io/yara/)
 
 
 ---
@@ -163,7 +164,7 @@ sudo ./kverify --cleanup
 
 ### YARA Rule Detection
 
-[YARA](https://virustotal.github.io/yara/) is a pattern-matching engine for malware identification. K-Verify uses it to check whether YARA rules correctly detect shellcode patterns in memory. You'll need it for the `--yara` scenario and the `YARA_SCAN` tests.
+<span style="color:#7C3AED;font-weight:700;border-bottom:2px solid #7C3AED;">YARA</span> is a pattern-matching engine for malware identification. K-Verify uses it to check whether YARA rules correctly detect shellcode patterns in memory. You'll need it for the `--yara` scenario and the `YARA_SCAN` tests.
 
 ```bash
 # Install YARA (optional, required for --yara)
