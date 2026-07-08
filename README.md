@@ -297,7 +297,6 @@ The language is C99. Data sources are `/proc`, `mmap`, and `prctl`. The build to
 - [x] Live tool integration (`--live`)
 - [x] Automated test suite (`make test`)
 - [x] CI/CD pipeline (GitHub Actions)
-- [ ] Multi-process coordinated attack scenarios
 
 
 ---
