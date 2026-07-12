@@ -65,36 +65,35 @@ Technique IDs are embedded in terminal output, JSON exports, and CSV reports.
 ## Example Output
 
 ```
-        ╔═══════════════════════════════════╗
-        ║            K-Verify               ║
-        ║     Purple Team — Adversarial     ║
-        ║          Validation               ║
-        ╚═══════════════════════════════════╝
+        ╔═══════════════════════════════════════════════════════╗
+        ║    K-Verify | Purple Team - Adversarial Validation    ║
+        ╚═══════════════════════════════════════════════════════╝
 
-  ══════════════════════════════════════════════════════════════════════════
+
+  ══════════════════════════════════════════════════════════════════
     RUN SEQUENCE INITIATED
-  ══════════════════════════════════════════════════════════════════════════
+  ══════════════════════════════════════════════════════════════════
 
-  [01/08] RWX_ALLOC ......  PASS  [KS:✔  LS:✘]  T1055.001
-  [02/08] RWX_EXEC .......  PASS  [KS:✔  LS:✘]  T1055
-  [03/08] HIDE_PROC ......  PASS  [KS:✔  LS:✘]  T1564
-  [04/08] HIDE_COMM ......  WARN  [KS:✘  LS:✘]  T1564
-  [05/08] BYPASS_WX ......  PASS  [KS:✘  LS:✔]  T1562.001
-  [06/08] BYPASS_ASLR ....  FAIL  [KS:✘  LS:✔]  T1562.001
-  [07/08] BPF_VALIDATE ...  PASS  [KS:✔  LS:✘]  T1059
-  [08/08] YARA_SCAN ......  SKIP  [KS:✘  LS:✘]  T1560
+   [01/08] RWX_ALLOC .......  PASS  [KS:✘  LS:✘]  T1055.001
+   [02/08] RWX_EXEC ........  PASS  [KS:✘  LS:✘]  T1055
+   [03/08] HIDE_PROC .......  PASS  [KS:✔  LS:✘]  T1564
+   [04/08] HIDE_COMM .......  SKIP  [KS:✘  LS:✘]  T1564
+   [05/08] BYPASS_WX .......  PASS  [KS:✘  LS:✘]  T1562.001
+   [06/08] BYPASS_ASLR .....  FAIL  [KS:✘  LS:✘]  T1562.001
+   [07/08] BPF_VALIDATE ....  PASS  [KS:✔  LS:✘]  T1059
+   [08/08] YARA_SCAN .......  PASS  [KS:✔  LS:✘]  T1560
 
-  ══════════════════════════════════════════════════════════════════════════
+  ══════════════════════════════════════════════════════════════════
     FINAL ASSESSMENT
-  ══════════════════════════════════════════════════════════════════════════
+  ══════════════════════════════════════════════════════════════════
 
-  [█████░░░░░]  4/8  (50%)  adversarial actions succeeded
-  [██░░░░░░░░]  2/8  (25%)  detected by K-Scanner
-  [█░░░░░░░░░]  1/8  (12%)  detected by LinSpec
-  [█████░░░░░]  4/8  (50%)  unmonitored gaps (no KS or LS coverage)
+   [███████░░░]  6/8  (75%)  adversarial actions succeeded
+   [███░░░░░░░]  3/8  (37%)  detected by K-Scanner
+   [░░░░░░░░░░]  0/8  (0%)  detected by LinSpec
+   [██████░░░░]  5/8  (62%)  unmonitored gaps (no KS or LS coverage)
 
    STATUS:  Purple Team Validation Complete
-  ══════════════════════════════════════════════════════════════════════════
+  ══════════════════════════════════════════════════════════════════
 ```
 
 
