@@ -122,49 +122,53 @@ The final assessment includes a metric called **unmonitored gaps** -- scenarios 
 
 ---
 
-## Build and Run
+## Quick Start
 
 ```bash
-# Clone the repository
 git clone https://github.com/jeffersoncesarantunes/K-Verify.git
-cd K-Verify
-
-# Build the project
-make
-
-# (Optional) Clean rebuild from scratch
-make clean && make
-
-# Run the test suite
-make test
-
-# Run all scenarios with default terminal output
+cd K-Verify && make
 sudo ./kverify
+```
 
-# Run all scenarios with silent JSON export (no banner, CI/CD ready)
-sudo ./kverify --json
+## Build
 
-# Export results to CSV
-sudo ./kverify --csv
+```bash
+make                # Build the project
+make clean && make  # Clean rebuild from scratch
+make test           # Run the test suite
+```
 
-# Run a specific module
+## Usage
+
+### General
+
+```bash
+sudo ./kverify               # Run all scenarios
+sudo ./kverify --verify-only # Read-only verification (no adversarial actions)
+sudo ./kverify --live        # Run with live K-Scanner/LinSpec integration
+sudo ./kverify --cleanup     # Clean up any remaining child processes
+```
+
+### Export
+
+```bash
+sudo ./kverify --json  # Silent JSON export, no banner (CI/CD ready)
+sudo ./kverify --csv   # Export results to CSV
+```
+
+When `--json` is used alone, the tool skips the banner and terminal output entirely and writes only the JSON report file. This is meant for automated pipelines, cron jobs, and CI/CD integration.
+
+### Modules
+
+```bash
 sudo ./kverify --rwx
 sudo ./kverify --hide
 sudo ./kverify --bypass
 sudo ./kverify --bpf
 sudo ./kverify --yara
-
-# Run with live K-Scanner/LinSpec integration
-sudo ./kverify --live
-
-# Read-only verification (no adversarial actions)
-sudo ./kverify --verify-only
-
-# Clean up any remaining child processes
-sudo ./kverify --cleanup
 ```
 
-### YARA Rule Detection
+### YARA
 
 <span style="color:#7C3AED;font-weight:700;border-bottom:2px solid #7C3AED;">YARA</span> is a pattern-matching engine for malware identification. K-Verify uses it to check whether YARA rules correctly detect shellcode patterns in memory. You'll need it for the `--yara` scenario and the `YARA_SCAN` tests.
 
@@ -172,8 +176,6 @@ sudo ./kverify --cleanup
 # Install YARA (optional, required for --yara)
 sudo pacman -S yara
 ```
-
-When `--json` is used alone, the tool skips the banner and terminal output entirely and writes only the JSON report file. This is meant for automated pipelines, cron jobs, and CI/CD integration.
 
 
 ---
